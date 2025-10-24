@@ -1,0 +1,151 @@
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+const Home = () => {
+  const { currentUser } = useAuth();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+      {/* Header/Navbar */}
+      <nav className="bg-white shadow-md">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <span className="text-3xl">🕌</span>
+            <span className="text-xl font-bold text-green-600">
+              Muslim Finance Tracker
+            </span>
+          </div>
+          
+          <div className="flex gap-3">
+            {currentUser ? (
+              <Link 
+                to="/dashboard"
+                className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link 
+                  to="/login"
+                  className="px-6 py-2 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-all"
+                >
+                  লগইন
+                </Link>
+                <Link 
+                  to="/register"
+                  className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all"
+                >
+                  রেজিস্টার
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center max-w-4xl mx-auto">
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            🕌 Muslim Finance Tracker
+          </h1>
+          <h2 className="text-4xl font-bold text-green-700 mb-6 bangla">
+            মুসলিম ফিনান্স ট্র্যাকার
+          </h2>
+          
+          <p className="text-xl text-gray-600 mb-4">
+            Personal Finance Management System
+          </p>
+          <p className="text-lg text-gray-500 mb-8 bangla">
+            আপনার আর্থিক ব্যবস্থাপনা সহজ করুন - ইসলামিক নীতিমালা অনুযায়ী
+          </p>
+
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-3 gap-6 mt-12">
+            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all">
+              <div className="text-4xl mb-3">💰</div>
+              <h3 className="text-xl font-bold mb-2">আয়-ব্যয় ব্যবস্থাপনা</h3>
+              <p className="text-gray-600 bangla">
+                আপনার সকল আয় এবং খরচ সহজে ট্র্যাক করুন
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all">
+              <div className="text-4xl mb-3">📊</div>
+              <h3 className="text-xl font-bold mb-2">রিপোর্ট ও বিশ্লেষণ</h3>
+              <p className="text-gray-600 bangla">
+                PDF রিপোর্ট জেনারেট করুন QR কোড সহ
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all">
+              <div className="text-4xl mb-3">🕌</div>
+              <h3 className="text-xl font-bold mb-2">যাকাত ক্যালকুলেটর</h3>
+              <p className="text-gray-600 bangla">
+                হানাফী মাযহাব অনুযায়ী যাকাত হিসাব করুন
+              </p>
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          {!currentUser && (
+            <div className="mt-12 flex gap-4 justify-center">
+              <Link 
+                to="/register"
+                className="px-8 py-4 bg-green-600 text-white text-lg rounded-xl font-bold hover:bg-green-700 transition-all shadow-lg hover:shadow-xl"
+              >
+                এখনই শুরু করুন →
+              </Link>
+              <Link 
+                to="/login"
+                className="px-8 py-4 bg-white text-green-600 text-lg rounded-xl font-bold border-2 border-green-600 hover:bg-green-50 transition-all"
+              >
+                লগইন করুন
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* About Section */}
+        <div className="mt-20 bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-6 bangla">
+            ওয়েবসাইট সম্পর্কে
+          </h2>
+          
+          <div className="space-y-4 text-gray-700 bangla leading-relaxed">
+            <p>
+              <strong>মুসলিম ফিনান্স ট্র্যাকার</strong> একটি সম্পূর্ণ ফ্রি এবং ইসলামিক নীতিমালা অনুসরণকারী 
+              ব্যক্তিগত আর্থিক ব্যবস্থাপনা সিস্টেম।
+            </p>
+            
+            <p>
+              এই ওয়েবসাইটের মাধ্যমে আপনি:
+            </p>
+            
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li>আপনার দৈনন্দিন আয়-ব্যয় রেকর্ড করতে পারবেন</li>
+              <li>ঋণ এবং সম্পদের হিসাব রাখতে পারবেন</li>
+              <li>বিস্তারিত রিপোর্ট PDF আকারে ডাউনলোড করতে পারবেন</li>
+              <li>যাকাত, ফিতরা, কোরবানি হিসাব করতে পারবেন</li>
+              <li>হানাফী মাযহাব অনুযায়ী ইসলামিক আর্থিক মাসায়েল জানতে পারবেন</li>
+            </ul>
+
+            <p className="mt-6 text-center font-semibold">
+              Google বা ইমেইল দিয়ে রেজিস্টার করে এখনই ব্যবহার শুরু করুন!
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-16 text-center text-gray-600">
+          <p className="font-semibold text-lg">Developed by Muslim Programmer</p>
+          <p className="bangla text-xl font-bold text-green-700">মুসলিম প্রোগ্রামার</p>
+          <p className="text-sm mt-2">© 2024 All Rights Reserved</p>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
+export default Home;
