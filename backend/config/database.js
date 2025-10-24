@@ -15,6 +15,7 @@ const connectDB = async () => {
   }
 };
 
+// Handle connection events
 mongoose.connection.on('connected', () => {
   console.log('🟢 Mongoose connected to MongoDB');
 });
@@ -27,9 +28,10 @@ mongoose.connection.on('disconnected', () => {
   console.log('🟡 Mongoose disconnected from MongoDB');
 });
 
+// Handle app termination
 process.on('SIGINT', async () => {
   await mongoose.connection.close();
-  console.log('�� MongoDB connection closed due to app termination');
+  console.log('🛑 MongoDB connection closed due to app termination');
   process.exit(0);
 });
 
