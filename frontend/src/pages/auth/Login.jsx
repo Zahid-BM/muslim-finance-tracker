@@ -17,22 +17,21 @@ const Login = () => {
     e.preventDefault();
     
     if (!email || !password) {
-      toast.error('ইমেইল এবং পাসওয়ার্ড দিন');
+      toast.error('❌ ইমেইল এবং পাসওয়ার্ড দিন');
       return;
     }
 
     setLoading(true);
+    
     try {
       await login(email, password);
-      navigate('/dashboard');
+      
+      // Success - Dashboard এ redirect করুন
+      navigate('/dashboard', { replace: true });
+      
     } catch (error) {
-      if (error.code === 'auth/user-not-found') {
-        toast.error('❌ এই ইমেইলের কোনো অ্যাকাউন্ট নেই');
-      } else if (error.code === 'auth/wrong-password') {
-        toast.error('❌ ভুল পাসওয়ার্ড');
-      } else {
-        toast.error('❌ লগইন করতে সমস্যা হয়েছে');
-      }
+      // Error already handled in AuthContext
+      console.error('Login failed:', error);
     } finally {
       setLoading(false);
     }
@@ -40,11 +39,16 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     setLoading(true);
+    
     try {
       await loginWithGoogle();
-      navigate('/dashboard');
+      
+      // Success - Dashboard এ redirect করুন
+      navigate('/dashboard', { replace: true });
+      
     } catch (error) {
-      toast.error('❌ Google লগইন করতে সমস্যা হয়েছে');
+      // Error already handled in AuthContext
+      console.error('Google login failed:', error);
     } finally {
       setLoading(false);
     }
@@ -68,10 +72,10 @@ const Login = () => {
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-semibold disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FcGoogle size={24} />
-          Google দিয়ে লগইন করুন
+          {loading ? 'অপেক্ষা করুন...' : 'Google দিয়ে লগইন করুন'}
         </button>
 
         <div className="relative">
@@ -98,7 +102,8 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={loading}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="আপনার ইমেইল"
                 required
               />
@@ -118,7 +123,8 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={loading}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="আপনার পাসওয়ার্ড"
                 required
               />
