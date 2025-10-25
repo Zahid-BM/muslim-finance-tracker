@@ -18,31 +18,34 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     
+    // Validation
     if (!name || !email || !password) {
-      toast.error('সকল তথ্য পূরণ করুন');
+      toast.error('❌ সকল তথ্য পূরণ করুন');
       return;
     }
 
     if (password.length < 6) {
-      toast.error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
+      toast.error('❌ পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error('পাসওয়ার্ড মিলছে না');
+      toast.error('❌ পাসওয়ার্ড মিলছে না');
       return;
     }
 
     setLoading(true);
+    
     try {
+      // Register করুন
       await register(email, password, name);
-      navigate('/dashboard');
+      
+      // Success - Dashboard এ redirect করুন
+      navigate('/dashboard', { replace: true });
+      
     } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
-        toast.error('❌ এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে');
-      } else {
-        toast.error('❌ রেজিস্ট্রেশন করতে সমস্যা হয়েছে');
-      }
+      // Error already handled in AuthContext
+      console.error('Registration failed:', error);
     } finally {
       setLoading(false);
     }
@@ -50,11 +53,16 @@ const Register = () => {
 
   const handleGoogleLogin = async () => {
     setLoading(true);
+    
     try {
       await loginWithGoogle();
-      navigate('/dashboard');
+      
+      // Success - Dashboard এ redirect করুন
+      navigate('/dashboard', { replace: true });
+      
     } catch (error) {
-      toast.error('❌ Google দিয়ে রেজিস্টার করতে সমস্যা হয়েছে');
+      // Error already handled in AuthContext
+      console.error('Google login failed:', error);
     } finally {
       setLoading(false);
     }
@@ -78,10 +86,10 @@ const Register = () => {
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-semibold disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FcGoogle size={24} />
-          Google দিয়ে রেজিস্টার করুন
+          {loading ? 'অপেক্ষা করুন...' : 'Google দিয়ে রেজিস্টার করুন'}
         </button>
 
         <div className="relative">
@@ -108,7 +116,8 @@ const Register = () => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={loading}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="আপনার নাম"
                 required
               />
@@ -128,7 +137,8 @@ const Register = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={loading}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="আপনার ইমেইল"
                 required
               />
@@ -148,7 +158,8 @@ const Register = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={loading}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="কমপক্ষে ৬ অক্ষর"
                 required
               />
@@ -168,7 +179,8 @@ const Register = () => {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={loading}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="পাসওয়ার্ড পুনরায় লিখুন"
                 required
               />

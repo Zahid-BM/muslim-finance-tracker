@@ -30,25 +30,47 @@ export const AuthProvider = ({ children }) => {
   // Register with Email/Password
   const register = async (email, password, name) => {
     try {
+      // Firebase এ user তৈরি করুন
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Update profile with name
+      // Profile update করুন
       await updateProfile(userCredential.user, {
         displayName: name
       });
 
-      // Send user data to backend
-      await axios.post(`${API_URL}/auth/register`, {
-        name: name,
-        email: email,
-        authProvider: 'local',
-        firebaseUid: userCredential.user.uid
-      });
+      // Backend এ user data পাঠান
+      try {
+        await axios.post(`${API_URL}/auth/register`, {
+          name: name,
+          email: email,
+          authProvider: 'local',
+          firebaseUid: userCredential.user.uid
+        });
+      } catch (backendError) {
+        console.log('Backend save error (non-critical):', backendError);
+        // Backend error হলেও Firebase এ user তৈরি হয়ে গেছে, তাই continue করুন
+      }
 
+      // Success notification
       toast.success('✅ অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
+      
+      // User object return করুন
       return userCredential.user;
+      
     } catch (error) {
       console.error('Registration error:', error);
+      
+      // Error notification
+      if (error.code === 'auth/email-already-in-use') {
+        toast.error('❌ এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে');
+      } else if (error.code === 'auth/weak-password') {
+        toast.error('❌ পাসওয়ার্ড আরও শক্তিশালী করুন');
+      } else if (error.code === 'auth/invalid-email') {
+        toast.error('❌ সঠিক ইমেইল দিন');
+      } else {
+        toast.error('❌ রেজিস্ট্রেশন করতে সমস্যা হয়েছে');
+      }
+      
       throw error;
     }
   };
@@ -61,6 +83,17 @@ export const AuthProvider = ({ children }) => {
       return userCredential.user;
     } catch (error) {
       console.error('Login error:', error);
+      
+      if (error.code === 'auth/user-not-found') {
+        toast.error('❌ এই ইমেইলের কোনো অ্যাকাউন্ট নেই');
+      } else if (error.code === 'auth/wrong-password') {
+        toast.error('❌ ভুল পাসওয়ার্ড');
+      } else if (error.code === 'auth/invalid-credential') {
+        toast.error('❌ ভুল ইমেইল বা পাসওয়ার্ড');
+      } else {
+        toast.error('❌ লগইন করতে সমস্যা হয়েছে');
+      }
+      
       throw error;
     }
   };
@@ -70,19 +103,33 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       
-      // Send user data to backend
-      await axios.post(`${API_URL}/auth/social-login`, {
-        name: result.user.displayName,
-        email: result.user.email,
-        profilePicture: result.user.photoURL,
-        authProvider: 'google',
-        firebaseUid: result.user.uid
-      });
+      // Backend এ user data পাঠান
+      try {
+        await axios.post(`${API_URL}/auth/social-login`, {
+          name: result.user.displayName,
+          email: result.user.email,
+          profilePicture: result.user.photoURL,
+          authProvider: 'google',
+          firebaseUid: result.user.uid
+        });
+      } catch (backendError) {
+        console.log('Backend save error (non-critical):', backendError);
+      }
 
       toast.success('✅ Google দিয়ে সফলভাবে লগইন হয়েছে!');
       return result.user;
+      
     } catch (error) {
       console.error('Google login error:', error);
+      
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast.error('❌ Google login বাতিল করা হয়েছে');
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        // Do nothing - user closed popup
+      } else {
+        toast.error('❌ Google লগইন করতে সমস্যা হয়েছে');
+      }
+      
       throw error;
     }
   };
@@ -94,6 +141,7 @@ export const AuthProvider = ({ children }) => {
       toast.success('✅ সফলভাবে লগআউট হয়েছে!');
     } catch (error) {
       console.error('Logout error:', error);
+      toast.error('❌ লগআউট করতে সমস্যা হয়েছে');
       throw error;
     }
   };
