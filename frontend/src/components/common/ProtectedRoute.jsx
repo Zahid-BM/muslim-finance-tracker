@@ -15,8 +15,9 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
+  // ✅ এখানে পরিবর্তন: /login এর বদলে / (Home)
   if (!currentUser) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;

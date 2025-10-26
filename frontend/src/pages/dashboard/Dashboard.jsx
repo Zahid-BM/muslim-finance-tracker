@@ -1,17 +1,24 @@
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { MdLogout, MdAccountCircle } from 'react-icons/md';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth();
-  const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
+    
     try {
+      // শুধু logout করুন, navigate করবেন না
+      // ProtectedRoute নিজে থেকে Home এ নিয়ে যাবে
       await logout();
-      navigate('/');
+      
     } catch (error) {
       console.error('Logout error:', error);
+      toast.error('❌ লগআউট ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
+      setIsLoggingOut(false);
     }
   };
 
@@ -43,10 +50,17 @@ const Dashboard = () => {
             
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
+              disabled={isLoggingOut}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <MdLogout size={20} />
-              লগআউট
+              {isLoggingOut ? (
+                <span>লগআউট হচ্ছে...</span>
+              ) : (
+                <>
+                  <MdLogout size={20} />
+                  লগআউট
+                </>
+              )}
             </button>
           </div>
         </div>

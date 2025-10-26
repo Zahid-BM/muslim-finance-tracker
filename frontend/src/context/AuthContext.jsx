@@ -30,15 +30,12 @@ export const AuthProvider = ({ children }) => {
   // Register with Email/Password
   const register = async (email, password, name) => {
     try {
-      // Firebase এ user তৈরি করুন
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Profile update করুন
       await updateProfile(userCredential.user, {
         displayName: name
       });
 
-      // Backend এ user data পাঠান
       try {
         await axios.post(`${API_URL}/auth/register`, {
           name: name,
@@ -48,19 +45,14 @@ export const AuthProvider = ({ children }) => {
         });
       } catch (backendError) {
         console.log('Backend save error (non-critical):', backendError);
-        // Backend error হলেও Firebase এ user তৈরি হয়ে গেছে, তাই continue করুন
       }
 
-      // Success notification
       toast.success('✅ অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
-      
-      // User object return করুন
       return userCredential.user;
       
     } catch (error) {
       console.error('Registration error:', error);
       
-      // Error notification
       if (error.code === 'auth/email-already-in-use') {
         toast.error('❌ এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে');
       } else if (error.code === 'auth/weak-password') {
@@ -103,7 +95,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       
-      // Backend এ user data পাঠান
       try {
         await axios.post(`${API_URL}/auth/social-login`, {
           name: result.user.displayName,
@@ -125,7 +116,7 @@ export const AuthProvider = ({ children }) => {
       if (error.code === 'auth/popup-closed-by-user') {
         toast.error('❌ Google login বাতিল করা হয়েছে');
       } else if (error.code === 'auth/cancelled-popup-request') {
-        // Do nothing - user closed popup
+        // Do nothing
       } else {
         toast.error('❌ Google লগইন করতে সমস্যা হয়েছে');
       }
@@ -134,11 +125,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout
+  // Logout - এখানে change করেছি
   const logout = async () => {
     try {
       await signOut(auth);
+      // User state null হয়ে যাবে, onAuthStateChanged automatically handle করবে
       toast.success('✅ সফলভাবে লগআউট হয়েছে!');
+      // কোনো navigate করছি না, component থেকে navigate হবে
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('❌ লগআউট করতে সমস্যা হয়েছে');
