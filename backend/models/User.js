@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: function() {
-      return !this.authProvider; // Password not required for OAuth users
+      return this.authProvider === 'local';
     },
     minlength: [6, 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে']
   },
@@ -31,9 +31,10 @@ const userSchema = new mongoose.Schema({
     enum: ['local', 'google', 'github'],
     default: 'local'
   },
-  authProviderId: {
+  firebaseUid: {
     type: String,
-    default: ''
+    sparse: true,
+    unique: true
   },
   language: {
     type: String,
@@ -46,7 +47,7 @@ const userSchema = new mongoose.Schema({
   },
   isVerified: {
     type: Boolean,
-    default: false
+    default: true
   },
   role: {
     type: String,
@@ -57,13 +58,11 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Hash password before saving
+// Hash password before saving (শুধু local auth এর জন্য)
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || !this.password) return next();
   
-  if (this.password) {
-    this.password = await bcrypt.hash(this.password, 12);
-  }
+  this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 

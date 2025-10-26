@@ -4,7 +4,6 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/database');
 
-// Initialize Express
 const app = express();
 
 // Connect to Database
@@ -19,7 +18,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Basic Routes
+// Import Routes
+const authRoutes = require('./routes/authRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
+
+// Routes
 app.get('/', (req, res) => {
   res.json({
     message: 'মুসলিম ফিনান্স ট্র্যাকার API',
@@ -37,7 +40,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// Health Check Route
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
@@ -46,6 +48,10 @@ app.get('/api/health', (req, res) => {
     database: 'Connected'
   });
 });
+
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 // 404 Handler
 app.use((req, res) => {
