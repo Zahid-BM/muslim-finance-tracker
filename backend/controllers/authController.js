@@ -5,10 +5,18 @@ exports.register = async (req, res) => {
   try {
     const { name, email, firebaseUid, authProvider } = req.body;
 
-    // Check if user already exists
-    let user = await User.findOne({ email });
-    
+    // Check if user already exists by email OR firebaseUid
+    let user = await User.findOne({ 
+      $or: [{ email }, { firebaseUid }] 
+    });
+
     if (user) {
+      // Update firebaseUid if changed (important for old users)
+      if (user.firebaseUid !== firebaseUid) {
+        user.firebaseUid = firebaseUid;
+        await user.save();
+      }
+      
       return res.status(200).json({
         success: true,
         message: 'User already exists',
@@ -45,13 +53,26 @@ exports.socialLogin = async (req, res) => {
   try {
     const { name, email, profilePicture, authProvider, firebaseUid } = req.body;
 
-    // Check if user exists
-    let user = await User.findOne({ email });
+    // Check if user exists by email OR firebaseUid
+    let user = await User.findOne({ 
+      $or: [{ email }, { firebaseUid }] 
+    });
 
     if (user) {
-      // Update profile picture if changed
+      // Update profile picture and firebaseUid if changed
+      let updated = false;
+      
       if (profilePicture && user.profilePicture !== profilePicture) {
         user.profilePicture = profilePicture;
+        updated = true;
+      }
+      
+      if (user.firebaseUid !== firebaseUid) {
+        user.firebaseUid = firebaseUid;
+        updated = true;
+      }
+      
+      if (updated) {
         await user.save();
       }
 
@@ -91,9 +112,9 @@ exports.socialLogin = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const { firebaseUid } = req.params;
-    
+
     const user = await User.findOne({ firebaseUid });
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
