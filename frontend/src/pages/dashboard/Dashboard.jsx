@@ -1,25 +1,60 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { MdLogout, MdAccountCircle } from 'react-icons/md';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+import AddIncome from '../../components/transactions/AddIncome';
+import AddExpense from '../../components/transactions/AddExpense';
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showIncomeModal, setShowIncomeModal] = useState(false);
+  const [showExpenseModal, setShowExpenseModal] = useState(false);
+  const [stats, setStats] = useState({
+    totalIncome: 0,
+    totalExpense: 0,
+    monthlyIncome: 0,
+    monthlyExpense: 0,
+    balance: 0
+  });
+  const [loading, setLoading] = useState(true);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     
     try {
-      // শুধু logout করুন, navigate করবেন না
-      // ProtectedRoute নিজে থেকে Home এ নিয়ে যাবে
       await logout();
-      
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('❌ লগআউট ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
       setIsLoggingOut(false);
     }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await axios.get(`${API_URL}/transactions/stats/${currentUser.uid}`);
+      
+      if (response.data.success) {
+        setStats(response.data.stats);
+      }
+    } catch (error) {
+      console.error('Fetch stats error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchStats();
+    }
+  }, [currentUser]);
+
+  const handleTransactionSuccess = () => {
+    fetchStats(); // Refresh stats
   };
 
   return (
@@ -85,7 +120,9 @@ const Dashboard = () => {
               <h3 className="text-gray-600 font-semibold">মোট আয়</h3>
               <span className="text-2xl">💰</span>
             </div>
-            <p className="text-3xl font-bold text-green-600">৳ 0</p>
+            <p className="text-3xl font-bold text-green-600">
+              ৳ {loading ? '...' : stats.monthlyIncome.toLocaleString()}
+            </p>
             <p className="text-sm text-gray-500 mt-1">এই মাসে</p>
           </div>
 
@@ -94,26 +131,32 @@ const Dashboard = () => {
               <h3 className="text-gray-600 font-semibold">মোট ব্যয়</h3>
               <span className="text-2xl">💸</span>
             </div>
-            <p className="text-3xl font-bold text-red-600">৳ 0</p>
+            <p className="text-3xl font-bold text-red-600">
+              ৳ {loading ? '...' : stats.monthlyExpense.toLocaleString()}
+            </p>
             <p className="text-sm text-gray-500 mt-1">এই মাসে</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-600">
             <div className="flex justify-between items-start mb-2">
-              <h3 className="text-gray-600 font-semibold">মোট সম্পদ</h3>
-              <span className="text-2xl">🏦</span>
+              <h3 className="text-gray-600 font-semibold">ব্যালেন্স</h3>
+              <span className="text-2xl">💵</span>
             </div>
-            <p className="text-3xl font-bold text-blue-600">৳ 0</p>
-            <p className="text-sm text-gray-500 mt-1">বর্তমান</p>
+            <p className="text-3xl font-bold text-blue-600">
+              ৳ {loading ? '...' : stats.balance.toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">মোট</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-orange-600">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-600">
             <div className="flex justify-between items-start mb-2">
-              <h3 className="text-gray-600 font-semibold">মোট ঋণ</h3>
-              <span className="text-2xl">📋</span>
+              <h3 className="text-gray-600 font-semibold">সঞ্চয়</h3>
+              <span className="text-2xl">🏦</span>
             </div>
-            <p className="text-3xl font-bold text-orange-600">৳ 0</p>
-            <p className="text-sm text-gray-500 mt-1">বর্তমান</p>
+            <p className="text-3xl font-bold text-purple-600">
+              ৳ {loading ? '...' : (stats.monthlyIncome - stats.monthlyExpense).toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">এই মাসে</p>
           </div>
         </div>
 
@@ -122,13 +165,19 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold mb-6 bangla">দ্রুত অ্যাক্সেস</h2>
           
           <div className="grid md:grid-cols-3 gap-4">
-            <button className="p-6 border-2 border-green-600 rounded-xl hover:bg-green-50 transition-all text-left">
+            <button 
+              onClick={() => setShowIncomeModal(true)}
+              className="p-6 border-2 border-green-600 rounded-xl hover:bg-green-50 transition-all text-left"
+            >
               <div className="text-3xl mb-2">➕</div>
               <h3 className="font-bold text-lg mb-1">আয় যোগ করুন</h3>
               <p className="text-sm text-gray-600 bangla">নতুন আয়ের তথ্য লিখুন</p>
             </button>
 
-            <button className="p-6 border-2 border-red-600 rounded-xl hover:bg-red-50 transition-all text-left">
+            <button 
+              onClick={() => setShowExpenseModal(true)}
+              className="p-6 border-2 border-red-600 rounded-xl hover:bg-red-50 transition-all text-left"
+            >
               <div className="text-3xl mb-2">➖</div>
               <h3 className="font-bold text-lg mb-1">ব্যয় যোগ করুন</h3>
               <p className="text-sm text-gray-600 bangla">নতুন খরচের তথ্য লিখুন</p>
@@ -141,16 +190,22 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
-
-        {/* Coming Soon Message */}
-        <div className="mt-8 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="text-5xl mb-4">🚀</div>
-          <h2 className="text-2xl font-bold mb-2">আরো Features শীঘ্রই আসছে!</h2>
-          <p className="bangla opacity-90">
-            সম্পূর্ণ ফিচার যুক্ত Dashboard তৈরি হচ্ছে...
-          </p>
-        </div>
       </div>
+
+      {/* Modals */}
+      {showIncomeModal && (
+        <AddIncome 
+          onClose={() => setShowIncomeModal(false)} 
+          onSuccess={handleTransactionSuccess}
+        />
+      )}
+      
+      {showExpenseModal && (
+        <AddExpense 
+          onClose={() => setShowExpenseModal(false)} 
+          onSuccess={handleTransactionSuccess}
+        />
+      )}
     </div>
   );
 };
