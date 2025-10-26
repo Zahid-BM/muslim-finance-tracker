@@ -20,17 +20,17 @@ const Register = () => {
     
     // Validation
     if (!name || !email || !password) {
-      toast.error('❌ সকল তথ্য পূরণ করুন');
+      toast.error('  সকল তথ্য পূরণ করুন');
       return;
     }
 
     if (password.length < 6) {
-      toast.error('❌ পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
+      toast.error('  পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error('❌ পাসওয়ার্ড মিলছে না');
+      toast.error('  পাসওয়ার্ড মিলছে না');
       return;
     }
 

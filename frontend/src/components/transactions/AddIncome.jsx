@@ -38,7 +38,7 @@ const AddIncome = ({ onClose, onSuccess }) => {
     e.preventDefault();
 
     if (!formData.category || !formData.amount) {
-      toast.error('❌ ক্যাটাগরি এবং পরিমাণ আবশ্যক');
+      toast.error('  ক্যাটাগরি এবং পরিমাণ আবশ্যক');
       return;
     }
 
@@ -58,7 +58,7 @@ const AddIncome = ({ onClose, onSuccess }) => {
         firebaseUid: currentUser.uid
       });
 
-      toast.success('✅ আয় সফলভাবে যোগ করা হয়েছে!');
+      toast.success('  আয় সফলভাবে যোগ করা হয়েছে!');
       
       // Reset form
       setFormData({
@@ -78,7 +78,7 @@ const AddIncome = ({ onClose, onSuccess }) => {
 
     } catch (error) {
       console.error('Add income error:', error);
-      toast.error('❌ আয় যোগ করতে ব্যর্থ হয়েছে');
+      toast.error('  আয় যোগ করতে ব্যর্থ হয়েছে');
     } finally {
       setLoading(false);
     }

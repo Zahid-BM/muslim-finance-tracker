@@ -47,20 +47,20 @@ export const AuthProvider = ({ children }) => {
         console.log('Backend save error (non-critical):', backendError);
       }
 
-      toast.success('✅ অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
+      toast.success('  অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
       return userCredential.user;
       
     } catch (error) {
       console.error('Registration error:', error);
       
       if (error.code === 'auth/email-already-in-use') {
-        toast.error('❌ এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে');
+        toast.error('  এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে');
       } else if (error.code === 'auth/weak-password') {
-        toast.error('❌ পাসওয়ার্ড আরও শক্তিশালী করুন');
+        toast.error('  পাসওয়ার্ড আরও শক্তিশালী করুন');
       } else if (error.code === 'auth/invalid-email') {
-        toast.error('❌ সঠিক ইমেইল দিন');
+        toast.error('  সঠিক ইমেইল দিন');
       } else {
-        toast.error('❌ রেজিস্ট্রেশন করতে সমস্যা হয়েছে');
+        toast.error('  রেজিস্ট্রেশন করতে সমস্যা হয়েছে');
       }
       
       throw error;
@@ -71,19 +71,19 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      toast.success('✅ সফলভাবে লগইন হয়েছে!');
+      toast.success('  সফলভাবে লগইন হয়েছে!');
       return userCredential.user;
     } catch (error) {
       console.error('Login error:', error);
       
       if (error.code === 'auth/user-not-found') {
-        toast.error('❌ এই ইমেইলের কোনো অ্যাকাউন্ট নেই');
+        toast.error('  এই ইমেইলের কোনো অ্যাকাউন্ট নেই');
       } else if (error.code === 'auth/wrong-password') {
-        toast.error('❌ ভুল পাসওয়ার্ড');
+        toast.error('  ভুল পাসওয়ার্ড');
       } else if (error.code === 'auth/invalid-credential') {
-        toast.error('❌ ভুল ইমেইল বা পাসওয়ার্ড');
+        toast.error('  ভুল ইমেইল বা পাসওয়ার্ড');
       } else {
-        toast.error('❌ লগইন করতে সমস্যা হয়েছে');
+        toast.error('  লগইন করতে সমস্যা হয়েছে');
       }
       
       throw error;
@@ -107,18 +107,18 @@ export const AuthProvider = ({ children }) => {
         console.log('Backend save error (non-critical):', backendError);
       }
 
-      toast.success('✅ Google দিয়ে সফলভাবে লগইন হয়েছে!');
+      toast.success('  Google দিয়ে সফলভাবে লগইন হয়েছে!');
       return result.user;
       
     } catch (error) {
       console.error('Google login error:', error);
       
       if (error.code === 'auth/popup-closed-by-user') {
-        toast.error('❌ Google login বাতিল করা হয়েছে');
+        toast.error('  Google login বাতিল করা হয়েছে');
       } else if (error.code === 'auth/cancelled-popup-request') {
         // Do nothing
       } else {
-        toast.error('❌ Google লগইন করতে সমস্যা হয়েছে');
+        toast.error('  Google লগইন করতে সমস্যা হয়েছে');
       }
       
       throw error;
@@ -130,11 +130,11 @@ export const AuthProvider = ({ children }) => {
     try {
       await signOut(auth);
       // User state null হয়ে যাবে, onAuthStateChanged automatically handle করবে
-      toast.success('✅ সফলভাবে লগআউট হয়েছে!');
+      toast.success('  সফলভাবে লগআউট হয়েছে!');
       // কোনো navigate করছি না, component থেকে navigate হবে
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('❌ লগআউট করতে সমস্যা হয়েছে');
+      toast.error('  লগআউট করতে সমস্যা হয়েছে');
       throw error;
     }
   };

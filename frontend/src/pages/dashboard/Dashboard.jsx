@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import AddIncome from '../../components/transactions/AddIncome';
 import AddExpense from '../../components/transactions/AddExpense';
+import TransactionList from '../../components/transactions/TransactionList';
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth();
@@ -27,7 +28,7 @@ const Dashboard = () => {
       await logout();
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('❌ লগআউট ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
+      toast.error('লগআউট ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
       setIsLoggingOut(false);
     }
   };
@@ -54,7 +55,7 @@ const Dashboard = () => {
   }, [currentUser]);
 
   const handleTransactionSuccess = () => {
-    fetchStats(); // Refresh stats
+    fetchStats();
   };
 
   return (
@@ -161,7 +162,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
           <h2 className="text-2xl font-bold mb-6 bangla">দ্রুত অ্যাক্সেস</h2>
           
           <div className="grid md:grid-cols-3 gap-4">
@@ -190,6 +191,9 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
+
+        {/* Transaction List */}
+        <TransactionList />
       </div>
 
       {/* Modals */}

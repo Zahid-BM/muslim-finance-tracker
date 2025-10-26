@@ -17,7 +17,7 @@ const Login = () => {
     e.preventDefault();
     
     if (!email || !password) {
-      toast.error('❌ ইমেইল এবং পাসওয়ার্ড দিন');
+      toast.error('  ইমেইল এবং পাসওয়ার্ড দিন');
       return;
     }
 

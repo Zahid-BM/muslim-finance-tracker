@@ -41,7 +41,7 @@ const AddExpense = ({ onClose, onSuccess }) => {
     e.preventDefault();
 
     if (!formData.category || !formData.amount) {
-      toast.error('❌ ক্যাটাগরি এবং পরিমাণ আবশ্যক');
+      toast.error('  ক্যাটাগরি এবং পরিমাণ আবশ্যক');
       return;
     }
 
@@ -61,7 +61,7 @@ const AddExpense = ({ onClose, onSuccess }) => {
         firebaseUid: currentUser.uid
       });
 
-      toast.success('✅ ব্যয় সফলভাবে যোগ করা হয়েছে!');
+      toast.success('  ব্যয় সফলভাবে যোগ করা হয়েছে!');
       
       // Reset form
       setFormData({
@@ -81,7 +81,7 @@ const AddExpense = ({ onClose, onSuccess }) => {
 
     } catch (error) {
       console.error('Add expense error:', error);
-      toast.error('❌ ব্যয় যোগ করতে ব্যর্থ হয়েছে');
+      toast.error('  ব্যয় যোগ করতে ব্যর্থ হয়েছে');
     } finally {
       setLoading(false);
     }
