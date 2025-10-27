@@ -15,10 +15,9 @@ const Home = () => {
               Muslim Finance Tracker
             </span>
           </div>
-          
           <div className="flex gap-3">
             {currentUser ? (
-              <Link 
+              <Link
                 to="/dashboard"
                 className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all"
               >
@@ -26,13 +25,13 @@ const Home = () => {
               </Link>
             ) : (
               <>
-                <Link 
+                <Link
                   to="/login"
                   className="px-6 py-2 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-all"
                 >
                   লগইন
                 </Link>
-                <Link 
+                <Link
                   to="/register"
                   className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all"
                 >
@@ -51,9 +50,8 @@ const Home = () => {
             🕌 Muslim Finance Tracker
           </h1>
           <h2 className="text-4xl font-bold text-green-700 mb-6 bangla">
-            মুসলিম ফিনান্স ট্র্যাকার
+            মুসলিম ফিন্যান্স ট্র্যাকার
           </h2>
-          
           <p className="text-xl text-gray-600 mb-4">
             Personal Finance Management System
           </p>
@@ -70,7 +68,6 @@ const Home = () => {
                 আপনার সকল আয় এবং খরচ সহজে ট্র্যাক করুন
               </p>
             </div>
-
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all">
               <div className="text-4xl mb-3">📊</div>
               <h3 className="text-xl font-bold mb-2">রিপোর্ট ও বিশ্লেষণ</h3>
@@ -78,7 +75,6 @@ const Home = () => {
                 PDF রিপোর্ট জেনারেট করুন QR কোড সহ
               </p>
             </div>
-
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all">
               <div className="text-4xl mb-3">🕌</div>
               <h3 className="text-xl font-bold mb-2">যাকাত ক্যালকুলেটর</h3>
@@ -88,16 +84,31 @@ const Home = () => {
             </div>
           </div>
 
+          {/* Zakat Calculator CTA */}
+          <div className="mt-12 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-2xl shadow-xl p-8">
+            <div className="text-5xl mb-4">🕌</div>
+            <h3 className="text-3xl font-bold mb-4 bangla">যাকাত ক্যালকুলেটর</h3>
+            <p className="text-lg mb-6 opacity-90 bangla">
+              লগইন ছাড়াই যাকাত হিসাব করুন - সম্পূর্ণ বিনামূল্যে
+            </p>
+            <Link
+              to="/zakat"
+              className="inline-block px-8 py-4 bg-white text-green-600 text-lg rounded-xl font-bold hover:bg-gray-100 transition-all"
+            >
+              যাকাত হিসাব করুন →
+            </Link>
+          </div>
+
           {/* CTA Buttons */}
           {!currentUser && (
             <div className="mt-12 flex gap-4 justify-center">
-              <Link 
+              <Link
                 to="/register"
                 className="px-8 py-4 bg-green-600 text-white text-lg rounded-xl font-bold hover:bg-green-700 transition-all shadow-lg hover:shadow-xl"
               >
                 এখনই শুরু করুন →
               </Link>
-              <Link 
+              <Link
                 to="/login"
                 className="px-8 py-4 bg-white text-green-600 text-lg rounded-xl font-bold border-2 border-green-600 hover:bg-green-50 transition-all"
               >
@@ -112,25 +123,21 @@ const Home = () => {
           <h2 className="text-3xl font-bold text-center mb-6 bangla">
             ওয়েবসাইট সম্পর্কে
           </h2>
-          
           <div className="space-y-4 text-gray-700 bangla leading-relaxed">
             <p>
-              <strong>মুসলিম ফিনান্স ট্র্যাকার</strong> একটি সম্পূর্ণ ফ্রি এবং ইসলামিক নীতিমালা অনুসরণকারী 
-              ব্যক্তিগত আর্থিক ব্যবস্থাপনা সিস্টেম।
+              <strong>মুসলিম ফিন্যান্স ট্র্যাকার</strong> একটি সম্পূর্ণ ফ্রি এবং ইসলামিক নীতিমালা
+              অনুসরণকারী ব্যক্তিগত আর্থিক ব্যবস্থাপনা সিস্টেম।
             </p>
-            
             <p>
               এই ওয়েবসাইটের মাধ্যমে আপনি:
             </p>
-            
             <ul className="list-disc list-inside space-y-2 ml-4">
               <li>আপনার দৈনন্দিন আয়-ব্যয় রেকর্ড করতে পারবেন</li>
               <li>ঋণ এবং সম্পদের হিসাব রাখতে পারবেন</li>
               <li>বিস্তারিত রিপোর্ট PDF আকারে ডাউনলোড করতে পারবেন</li>
-              <li>যাকাত, ফিতরা, কোরবানি হিসাব করতে পারবেন</li>
+              <li>যাকাত, ফিতরা, কুরবানি হিসাব করতে পারবেন</li>
               <li>হানাফী মাযহাব অনুযায়ী ইসলামিক আর্থিক মাসায়েল জানতে পারবেন</li>
             </ul>
-
             <p className="mt-6 text-center font-semibold">
               Google বা ইমেইল দিয়ে রেজিস্টার করে এখনই ব্যবহার শুরু করুন!
             </p>
