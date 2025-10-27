@@ -42,7 +42,7 @@ const LoanList = () => {
       await axios.delete(`${API_URL}/loans/${id}`, {
         data: { firebaseUid: currentUser.uid }
       });
-
+      
       toast.success('ঋণ মুছে ফেলা হয়েছে');
       fetchLoans();
     } catch (error) {
@@ -69,7 +69,6 @@ const LoanList = () => {
     <div className="bg-white rounded-2xl shadow-xl p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">ঋণের তালিকা</h2>
-        
         <div className="flex gap-2">
           <button
             onClick={() => setFilter('all')}
@@ -121,7 +120,6 @@ const LoanList = () => {
                       {loan.description && <p className="text-sm text-gray-600">{loan.description}</p>}
                     </div>
                   </div>
-                  
                   <div className="flex items-center gap-4 text-sm text-gray-600 mt-2">
                     <span>তারিখ: {new Date(loan.date).toLocaleDateString('bn-BD')}</span>
                     {loan.dueDate && (
@@ -135,7 +133,6 @@ const LoanList = () => {
                     )}
                   </div>
                 </div>
-
                 <div className="flex items-center gap-4">
                   <div className="text-right">
                     <p className={`text-2xl font-bold ${
@@ -151,7 +148,6 @@ const LoanList = () => {
                       {loan.status === 'paid' ? 'পরিশোধিত' : loan.status === 'partial' ? 'আংশিক' : 'বাকি'}
                     </span>
                   </div>
-
                   <button
                     onClick={() => handleDelete(loan._id)}
                     className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-all"

@@ -7,7 +7,6 @@ import { MdClose } from 'react-icons/md';
 const AddLoan = ({ onClose, onSuccess, loanType }) => {
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  
   const [formData, setFormData] = useState({
     personName: '',
     amount: '',
@@ -34,10 +33,8 @@ const AddLoan = ({ onClose, onSuccess, loanType }) => {
     }
 
     setLoading(true);
-
     try {
       const API_URL = import.meta.env.VITE_API_URL;
-
       await axios.post(`${API_URL}/loans`, {
         type: loanType,
         personName: formData.personName,
@@ -61,10 +58,9 @@ const AddLoan = ({ onClose, onSuccess, loanType }) => {
         phoneNumber: '',
         notes: ''
       });
-
+      
       if (onSuccess) onSuccess();
       if (onClose) onClose();
-
     } catch (error) {
       console.error('Add loan error:', error);
       toast.error(error.response?.data?.message || 'ঋণ যোগ করতে ব্যর্থ হয়েছে');
@@ -102,7 +98,9 @@ const AddLoan = ({ onClose, onSuccess, loanType }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">পরিমাণ (৳) *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              পরিমাণ (৳) *
+            </label>
             <input
               type="number"
               name="amount"
@@ -117,7 +115,9 @@ const AddLoan = ({ onClose, onSuccess, loanType }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">বিবরণ</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              বিবরণ
+            </label>
             <input
               type="text"
               name="description"
@@ -129,7 +129,9 @@ const AddLoan = ({ onClose, onSuccess, loanType }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">তারিখ</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              তারিখ
+            </label>
             <input
               type="date"
               name="date"
@@ -140,7 +142,9 @@ const AddLoan = ({ onClose, onSuccess, loanType }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">শেষ তারিখ</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              শেষ তারিখ
+            </label>
             <input
               type="date"
               name="dueDate"
@@ -151,7 +155,9 @@ const AddLoan = ({ onClose, onSuccess, loanType }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">ফোন নম্বর</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              ফোন নম্বর
+            </label>
             <input
               type="tel"
               name="phoneNumber"
@@ -163,7 +169,9 @@ const AddLoan = ({ onClose, onSuccess, loanType }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">নোট</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              নোট
+            </label>
             <textarea
               name="notes"
               value={formData.notes}
