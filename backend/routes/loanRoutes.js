@@ -1,11 +1,10 @@
-const express = require("express");
-const { protect } = require("../middleware/auth");
-const { createLoan, getLoans } = require("../controllers/loanController");
-
+const express = require('express');
 const router = express.Router();
+const loanController = require('../controllers/loanController');
 
-// Loan routes
-router.post("/", protect, createLoan);
-router.get("/", protect, getLoans);
+router.post('/', loanController.addLoan);
+router.get('/:firebaseUid', loanController.getLoans);
+router.get('/stats/:firebaseUid', loanController.getLoanStats);
+router.delete('/:id', loanController.deleteLoan);
 
 module.exports = router;

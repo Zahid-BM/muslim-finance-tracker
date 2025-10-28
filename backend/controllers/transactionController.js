@@ -1,23 +1,18 @@
 const Transaction = require('../models/Transaction');
+const User = require('../models/User');
 
-// Add Transaction (আয় বা ব্যয়)
 exports.addTransaction = async (req, res) => {
   try {
-    const { type, category, amount, description, date, paymentMethod, notes } = req.body;
-    const { firebaseUid } = req.body;
-
-    // Validation
-    if (!type || !category || !amount) {
+    const { type, category, amount, description, date, paymentMethod, notes, firebaseUid } = req.body;
+    
+    if (!type || !category || !amount || !firebaseUid) {
       return res.status(400).json({
         success: false,
         message: 'সকল আবশ্যক তথ্য দিন'
       });
     }
 
-    // Get user from database
-    const User = require('../models/User');
     const user = await User.findOne({ firebaseUid });
-
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -25,7 +20,6 @@ exports.addTransaction = async (req, res) => {
       });
     }
 
-    // Create transaction
     const transaction = await Transaction.create({
       user: user._id,
       type,
@@ -52,16 +46,12 @@ exports.addTransaction = async (req, res) => {
   }
 };
 
-// Get All Transactions
 exports.getTransactions = async (req, res) => {
   try {
     const { firebaseUid } = req.params;
     const { type, startDate, endDate, category } = req.query;
-
-    // Get user
-    const User = require('../models/User');
+    
     const user = await User.findOne({ firebaseUid });
-
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -69,9 +59,8 @@ exports.getTransactions = async (req, res) => {
       });
     }
 
-    // Build query
     let query = { user: user._id };
-
+    
     if (type) query.type = type;
     if (category) query.category = category;
     if (startDate || endDate) {
@@ -80,7 +69,6 @@ exports.getTransactions = async (req, res) => {
       if (endDate) query.date.$lte = new Date(endDate);
     }
 
-    // Get transactions
     const transactions = await Transaction.find(query).sort({ date: -1 });
 
     res.status(200).json({
@@ -98,15 +86,11 @@ exports.getTransactions = async (req, res) => {
   }
 };
 
-// Get Transaction Stats (Dashboard এর জন্য)
 exports.getTransactionStats = async (req, res) => {
   try {
     const { firebaseUid } = req.params;
-
-    // Get user
-    const User = require('../models/User');
+    
     const user = await User.findOne({ firebaseUid });
-
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -114,43 +98,38 @@ exports.getTransactionStats = async (req, res) => {
       });
     }
 
-    // Current month
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    // Total Income
     const totalIncome = await Transaction.aggregate([
       { $match: { user: user._id, type: 'income' } },
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]);
 
-    // Total Expense
     const totalExpense = await Transaction.aggregate([
       { $match: { user: user._id, type: 'expense' } },
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]);
 
-    // Monthly Income
     const monthlyIncome = await Transaction.aggregate([
-      { 
-        $match: { 
-          user: user._id, 
+      {
+        $match: {
+          user: user._id,
           type: 'income',
           date: { $gte: startOfMonth, $lte: endOfMonth }
-        } 
+        }
       },
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]);
 
-    // Monthly Expense
     const monthlyExpense = await Transaction.aggregate([
-      { 
-        $match: { 
-          user: user._id, 
+      {
+        $match: {
+          user: user._id,
           type: 'expense',
           date: { $gte: startOfMonth, $lte: endOfMonth }
-        } 
+        }
       },
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]);
@@ -175,16 +154,12 @@ exports.getTransactionStats = async (req, res) => {
   }
 };
 
-// Delete Transaction
 exports.deleteTransaction = async (req, res) => {
   try {
     const { id } = req.params;
     const { firebaseUid } = req.body;
-
-    // Get user
-    const User = require('../models/User');
+    
     const user = await User.findOne({ firebaseUid });
-
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -192,7 +167,6 @@ exports.deleteTransaction = async (req, res) => {
       });
     }
 
-    // Find and delete transaction
     const transaction = await Transaction.findOneAndDelete({
       _id: id,
       user: user._id
