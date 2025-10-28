@@ -49,11 +49,6 @@ const Dashboard = () => {
       if (transRes.data.success) {
         setStats(transRes.data.stats);
       }
-      
-      const loanRes = await axios.get(`${API_URL}/loans/stats/${currentUser.uid}`);
-      if (loanRes.data.success) {
-        setLoanStats(loanRes.data.stats);
-      }
     } catch (error) {
       console.error('Fetch stats error:', error);
     } finally {
@@ -61,9 +56,23 @@ const Dashboard = () => {
     }
   };
 
+  const fetchLoanStats = async () => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await axios.get(`${API_URL}/loans/stats/${currentUser.uid}`);
+      
+      if (response.data.success) {
+        setLoanStats(response.data.stats);
+      }
+    } catch (error) {
+      console.error('Fetch loan stats error:', error);
+    }
+  };
+
   useEffect(() => {
     if (currentUser) {
       fetchStats();
+      fetchLoanStats();
     }
   }, [currentUser]);
 
@@ -118,10 +127,11 @@ const Dashboard = () => {
           <p className="text-gray-600 bangla">আপনার আর্থিক ব্যবস্থাপনা শুরু করুন</p>
         </div>
 
+        {/* 6 Cards */}
         <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <div className="bg-white rounded-xl shadow-lg p-4 border-l-4 border-green-600">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="text-gray-600 text-sm font-semibold">মোট আয়</h3>
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-gray-600 font-semibold text-sm">মোট আয়</h3>
               <span className="text-xl">💰</span>
             </div>
             <p className="text-2xl font-bold text-green-600">
@@ -131,8 +141,8 @@ const Dashboard = () => {
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-4 border-l-4 border-red-600">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="text-gray-600 text-sm font-semibold">মোট ব্যয়</h3>
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-gray-600 font-semibold text-sm">মোট ব্যয়</h3>
               <span className="text-xl">💸</span>
             </div>
             <p className="text-2xl font-bold text-red-600">
@@ -142,8 +152,8 @@ const Dashboard = () => {
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-4 border-l-4 border-blue-600">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="text-gray-600 text-sm font-semibold">ব্যালেন্স</h3>
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-gray-600 font-semibold text-sm">ব্যালেন্স</h3>
               <span className="text-xl">💵</span>
             </div>
             <p className="text-2xl font-bold text-blue-600">
@@ -153,8 +163,8 @@ const Dashboard = () => {
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-4 border-l-4 border-purple-600">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="text-gray-600 text-sm font-semibold">সঞ্চয়</h3>
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-gray-600 font-semibold text-sm">সঞ্চয়</h3>
               <span className="text-xl">🏦</span>
             </div>
             <p className="text-2xl font-bold text-purple-600">
@@ -164,31 +174,32 @@ const Dashboard = () => {
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-4 border-l-4 border-orange-600">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="text-gray-600 text-sm font-semibold">দেওয়া ঋণ</h3>
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-gray-600 font-semibold text-sm">দেওয়া ঋণ</h3>
               <span className="text-xl">📤</span>
             </div>
             <p className="text-2xl font-bold text-orange-600">
               ৳ {loading ? '...' : loanStats.totalGiven.toLocaleString()}
             </p>
-            <p className="text-xs text-gray-500 mt-1">বাকি</p>
+            <p className="text-xs text-gray-500 mt-1">বকেয়া</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-4 border-l-4 border-pink-600">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="text-gray-600 text-sm font-semibold">নেওয়া ঋণ</h3>
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-gray-600 font-semibold text-sm">নেওয়া ঋণ</h3>
               <span className="text-xl">📥</span>
             </div>
             <p className="text-2xl font-bold text-pink-600">
               ৳ {loading ? '...' : loanStats.totalTaken.toLocaleString()}
             </p>
-            <p className="text-xs text-gray-500 mt-1">বাকি</p>
+            <p className="text-xs text-gray-500 mt-1">বকেয়া</p>
           </div>
         </div>
 
+        {/* Quick Actions - শুধু 3টি */}
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
           <h2 className="text-2xl font-bold mb-6 bangla">দ্রুত অ্যাক্সেস</h2>
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-3 gap-4">
             <button
               onClick={() => setShowIncomeModal(true)}
               className="p-6 border-2 border-green-600 rounded-xl hover:bg-green-50 transition-all text-left"
@@ -213,16 +224,7 @@ const Dashboard = () => {
             >
               <div className="text-3xl mb-2">📋</div>
               <h3 className="font-bold text-lg mb-1">ঋণ ব্যবস্থাপনা</h3>
-              <p className="text-sm text-gray-600 bangla">ঋণ দেওয়া/নেওয়া দেখুন</p>
-            </button>
-
-            <button
-              onClick={() => navigate('/zakat')}
-              className="p-6 border-2 border-blue-600 rounded-xl hover:bg-blue-50 transition-all text-left"
-            >
-              <div className="text-3xl mb-2">🕌</div>
-              <h3 className="font-bold text-lg mb-1">যাকাত ক্যালকুলেটর</h3>
-              <p className="text-sm text-gray-600 bangla">যাকাত হিসাব করুন</p>
+              <p className="text-sm text-gray-600 bangla">দেওয়া/নেওয়া ঋণ দেখুন</p>
             </button>
           </div>
         </div>
