@@ -226,6 +226,14 @@ const Dashboard = () => {
               <h3 className="font-bold text-lg mb-1">ঋণ ব্যবস্থাপনা</h3>
               <p className="text-sm text-gray-600 bangla">দেওয়া/নেওয়া ঋণ দেখুন</p>
             </button>
+            <button
+                onClick={() => navigate('/reports')}
+                className="p-6 border-2 border-blue-600 rounded-xl hover:bg-blue-50 transition-all text-left"
+>
+                <div className="text-3xl mb-2">📊</div>
+                <h3 className="font-bold text-lg mb-1">রিপোর্ট দেখুন</h3>
+                <p className="text-sm text-gray-600 bangla">PDF রিপোর্ট তৈরি করুন</p>
+            </button>
           </div>
         </div>
 
