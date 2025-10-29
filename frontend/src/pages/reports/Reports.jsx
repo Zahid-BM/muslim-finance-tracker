@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { MdArrowBack, MdDownload, MdPictureAsPdf } from 'react-icons/md';
+import { MdArrowBack, MdDownload, MdPictureAsPdf, MdLanguage } from 'react-icons/md';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { generateFinancialReport } from '../../utils/pdfGenerator';
+import { generateFinancialReport } from '../../utils/pdfGeneratorMultilingual';
 
 const Reports = () => {
   const { currentUser } = useAuth();
@@ -13,6 +13,7 @@ const Reports = () => {
   const [stats, setStats] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loans, setLoans] = useState([]);
+  const [selectedLanguage, setSelectedLanguage] = useState('bn');
 
   useEffect(() => {
     fetchAllData();
@@ -48,7 +49,7 @@ const Reports = () => {
         profilePicture: currentUser.photoURL
       };
 
-      const doc = await generateFinancialReport(userData, transactions, loans, stats);
+      const doc = await generateFinancialReport(userData, transactions, loans, stats, selectedLanguage);
       
       const fileName = `Finance_Report_${new Date().toISOString().split('T')[0]}.pdf`;
       doc.save(fileName);
@@ -61,6 +62,14 @@ const Reports = () => {
       setLoading(false);
     }
   };
+
+  const languages = [
+    { code: 'bn', name: 'বাংলা', flag: '🇧🇩' },
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+    { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
+    { code: 'ur', name: 'اردو', flag: '🇵🇰' }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
@@ -102,19 +111,43 @@ const Reports = () => {
           </div>
         )}
 
-        {/* Download Section */}
+        {/* Language Selector + Download Section */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="flex items-center gap-3 mb-6">
             <MdPictureAsPdf size={32} className="text-red-600" />
             <div>
               <h2 className="text-2xl font-bold text-gray-900">PDF রিপোর্ট</h2>
-              <p className="text-gray-600 bangla">সম্পূর্ণ আর্থিক রিপোর্ট ডাউনলোড করুন</p>
+              <p className="text-gray-600">সম্পূর্ণ আর্থিক রিপোর্ট ডাউনলোড করুন</p>
+            </div>
+          </div>
+
+          {/* Language Selector */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <MdLanguage size={20} className="text-green-600" />
+              <label className="font-semibold text-gray-700">ভাষা নির্বাচন করুন:</label>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => setSelectedLanguage(lang.code)}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    selectedLanguage === lang.code
+                      ? 'border-green-600 bg-green-50 text-green-700'
+                      : 'border-gray-200 hover:border-green-300'
+                  }`}
+                >
+                  <div className="text-2xl mb-1">{lang.flag}</div>
+                  <div className="text-sm font-semibold">{lang.name}</div>
+                </button>
+              ))}
             </div>
           </div>
 
           <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-6">
-            <h3 className="font-bold text-lg mb-3 bangla">রিপোর্টে যা থাকবে:</h3>
-            <ul className="space-y-2 text-gray-700 bangla">
+            <h3 className="font-bold text-lg mb-3">রিপোর্টে যা থাকবে:</h3>
+            <ul className="space-y-2 text-gray-700">
               <li className="flex items-center gap-2">
                 <span className="text-green-600">✓</span>
                 আর্থিক সারসংক্ষেপ
@@ -147,14 +180,14 @@ const Reports = () => {
             {loading ? 'তৈরি হচ্ছে...' : 'PDF ডাউনলোড করুন'}
           </button>
 
-          <p className="text-center text-sm text-gray-500 mt-4 bangla">
+          <p className="text-center text-sm text-gray-500 mt-4">
             রিপোর্টে আপনার সর্বশেষ {transactions.length}টি লেনদেন অন্তর্ভুক্ত থাকবে
           </p>
         </div>
 
         {/* Quick Stats Preview */}
         <div className="mt-8 bg-white rounded-2xl shadow-xl p-8">
-          <h3 className="text-xl font-bold mb-4 bangla">দ্রুত পরিসংখ্যান</h3>
+          <h3 className="text-xl font-bold mb-4">দ্রুত পরিসংখ্যান</h3>
           <div className="grid md:grid-cols-2 gap-4 text-sm">
             <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-gray-600">মোট লেনদেন:</span>
@@ -165,13 +198,13 @@ const Reports = () => {
               <span className="font-bold">{loans.length}টি</span>
             </div>
             <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-              <span className="text-gray-600 bangla">এই মাসের আয়:</span>
+              <span className="text-gray-600">এই মাসের আয়:</span>
               <span className="font-bold text-green-600">
                 ৳ {stats?.monthlyIncome.toLocaleString()}
               </span>
             </div>
             <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-              <span className="text-gray-600 bangla">এই মাসের ব্যয়:</span>
+              <span className="text-gray-600">এই মাসের ব্যয়:</span>
               <span className="font-bold text-red-600">
                 ৳ {stats?.monthlyExpense.toLocaleString()}
               </span>
