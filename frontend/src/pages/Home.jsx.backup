@@ -7,18 +7,14 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Header/Navbar */}
-      <nav className="bg-white shadow-md sticky top-0 z-50">
+      <nav className="bg-white shadow-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/" className="flex flex-col items-center gap-1">
-            <img 
-              src="/logos/logo-full.png" 
-              alt="Muslim Finance Tracker Logo" 
-              className="h-10 w-auto"
-            />
-            <span className="text-xs font-semibold text-green-600">
+          <div className="flex items-center gap-2">
+            <span className="text-3xl">🕌</span>
+            <span className="text-xl font-bold text-green-600">
               Muslim Finance Tracker
             </span>
-          </Link>
+          </div>
           <div className="flex gap-3">
             {currentUser ? (
               <Link
@@ -50,15 +46,8 @@ const Home = () => {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="text-center max-w-4xl mx-auto">
-          <div className="flex justify-center mb-4">
-            <img 
-              src="/logos/logo-full.png" 
-              alt="Muslim Finance Tracker" 
-              className="h-16 w-auto"
-            />
-          </div>
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            Muslim Finance Tracker
+            🕌 Muslim Finance Tracker
           </h1>
           <h2 className="text-4xl font-bold text-green-700 mb-6 bangla">
             মুসলিম ফিন্যান্স ট্র্যাকার

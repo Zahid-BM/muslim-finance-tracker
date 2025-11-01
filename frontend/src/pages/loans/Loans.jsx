@@ -46,8 +46,12 @@ const Loans = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      <nav className="bg-white shadow-md">
+      <nav className="bg-white shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <img src="/logos/logo-full.png" alt="Logo" className="h-8 w-auto" />
+            <span className="text-sm font-semibold text-green-600">Muslim Finance Tracker</span>
+          </div>
           <button
             onClick={() => navigate('/dashboard')}
             className="p-2 hover:bg-gray-100 rounded-lg transition-all"

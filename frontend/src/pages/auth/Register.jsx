@@ -73,7 +73,14 @@ const Register = () => {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl">
         {/* Header */}
         <div className="text-center">
-          <div className="text-5xl mb-4">🕌</div>
+          <div className="flex flex-col items-center mb-4">
+            <img 
+              src="/logos/logo-full.png" 
+              alt="Muslim Finance Tracker" 
+              className="h-16 w-auto mb-2"
+            />
+            <span className="text-sm font-semibold text-green-600">Muslim Finance Tracker</span>
+          </div>
           <h2 className="text-3xl font-bold text-gray-900">
             রেজিস্টার করুন
           </h2>
