@@ -1,8 +1,17 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const Home = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
+  
+  // Auto-redirect logged-in users to Dashboard
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [currentUser, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">

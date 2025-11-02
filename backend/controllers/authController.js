@@ -3,39 +3,64 @@ const User = require('../models/User');
 // Register with Email/Password
 exports.register = async (req, res) => {
   try {
-    const { name, email, firebaseUid, authProvider } = req.body;
+    const { name, email, firebaseUid, authProvider, isEmailVerified } = req.body;
 
-    // Check if user already exists by email OR firebaseUid
+    // Validation
+    if (!firebaseUid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Firebase UID is required'
+      });
+    }
+
+    // Check if user already exists by firebaseUid (primary) or email (secondary)
     let user = await User.findOne({ 
-      $or: [{ email }, { firebaseUid }] 
+      $or: [{ firebaseUid }, { email }] 
     });
 
     if (user) {
-      // Update firebaseUid if changed (important for old users)
+      // Update user info if changed
+      let updated = false;
+      
       if (user.firebaseUid !== firebaseUid) {
         user.firebaseUid = firebaseUid;
+        updated = true;
+      }
+      
+      if (user.name !== name) {
+        user.name = name;
+        updated = true;
+      }
+      
+      if (isEmailVerified !== undefined && user.isEmailVerified !== isEmailVerified) {
+        user.isEmailVerified = isEmailVerified;
+        updated = true;
+      }
+      
+      if (updated) {
         await user.save();
       }
       
       return res.status(200).json({
         success: true,
-        message: 'User already exists',
+        message: 'User synced successfully',
         user
       });
     }
 
-    // Create new user
+    // Create new user (NO password field - Firebase handles auth)
     user = await User.create({
       name,
       email,
-      authProvider: authProvider || 'local',
+      authProvider: authProvider || 'firebase-email',
       firebaseUid,
-      isVerified: true
+      isVerified: true,
+      isEmailVerified: isEmailVerified || false
     });
 
     res.status(201).json({
       success: true,
-      message: 'Registration successful',
+      message: 'User created successfully',
       user
     });
   } catch (error) {
@@ -83,14 +108,15 @@ exports.socialLogin = async (req, res) => {
       });
     }
 
-    // Create new user
+    // Create new user (NO password - Firebase handles auth)
     user = await User.create({
       name,
       email,
       profilePicture,
-      authProvider,
+      authProvider: authProvider || 'firebase-google',
       firebaseUid,
-      isVerified: true
+      isVerified: true,
+      isEmailVerified: true  // Google accounts are pre-verified
     });
 
     res.status(201).json({

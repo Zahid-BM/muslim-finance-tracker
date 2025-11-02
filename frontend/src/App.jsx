@@ -6,6 +6,7 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 // Pages
 import Home from './pages/Home';
 import Login from './pages/auth/Login';
+import RegistrationSuccess from './pages/auth/RegistrationSuccess';
 import Register from './pages/auth/Register';
 import Dashboard from './pages/dashboard/Dashboard';
 import Loans from './pages/loans/Loans';
@@ -46,6 +47,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/registration-success" element={<RegistrationSuccess />} />
           <Route path="/zakat" element={<ZakatCalculator />} />
 
           {/* Protected Routes */}

@@ -1,55 +1,60 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
-import { MdEmail, MdLock, MdVisibility, MdVisibilityOff } from 'react-icons/md';
+import { MdEmail, MdLock, MdPerson, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 
-const Login = () => {
+const Register = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  const { login, loginWithGoogle } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  // Show verification help if coming from registration
-  useEffect(() => {
-    if (location.state?.showVerificationHelp) {
-      if (location.state?.email) {
-        setEmail(location.state.email);
-      }
-      
-      // Show helpful message
-      setTimeout(() => {
-        toast.info('ইমেইল চেক করুন (Inbox অথবা Spam folder)', {
-          duration: 8000
-        });
-      }, 500);
-    }
-  }, [location]);
 
-  const handleEmailLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     
-    if (!email || !password) {
-      toast.error('  ইমেইল এবং পাসওয়ার্ড দিন');
+    // Validation
+    if (!name || !email || !password) {
+      toast.error('সকল তথ্য পূরণ করুন');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error('পাসওয়ার্ড মিলছে না');
       return;
     }
 
     setLoading(true);
     
     try {
-      await login(email, password);
+      // Register করুন
+      const result = await register(email, password, name);
       
-      // Success - Dashboard এ redirect করুন
-      navigate('/dashboard', { replace: true });
+      if (result && result.needsVerification) {
+        // Redirect to success page
+        navigate('/registration-success', { 
+          replace: true,
+          state: { 
+            email: email
+          }
+        });
+      }
       
     } catch (error) {
       // Error already handled in AuthContext
-      console.error('Login failed:', error);
+      console.error('Registration failed:', error);
     } finally {
       setLoading(false);
     }
@@ -86,10 +91,10 @@ const Login = () => {
             <span className="text-sm font-semibold text-green-600">Muslim Finance Tracker</span>
           </div>
           <h2 className="text-3xl font-bold text-gray-900">
-            লগইন করুন
+            রেজিস্টার করুন
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            আপনার অ্যাকাউন্টে প্রবেশ করুন
+            নতুন অ্যাকাউন্ট তৈরি করুন
           </p>
         </div>
 
@@ -100,7 +105,7 @@ const Login = () => {
           className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FcGoogle size={24} />
-          {loading ? 'অপেক্ষা করুন...' : 'Google দিয়ে লগইন করুন'}
+          {loading ? 'অপেক্ষা করুন...' : 'Google দিয়ে রেজিস্টার করুন'}
         </button>
 
         <div className="relative">
@@ -112,8 +117,29 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Email Login Form */}
-        <form onSubmit={handleEmailLogin} className="space-y-6">
+        {/* Register Form */}
+        <form onSubmit={handleRegister} className="space-y-6">
+          {/* Name Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              নাম
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <MdPerson className="text-gray-400" size={20} />
+              </div>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={loading}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                placeholder="আপনার নাম"
+                required
+              />
+            </div>
+          </div>
+
           {/* Email Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -145,43 +171,53 @@ const Login = () => {
                 <MdLock className="text-gray-400" size={20} />
               </div>
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                placeholder="আপনার পাসওয়ার্ড"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                placeholder="কমপক্ষে ৬ অক্ষর"
                 required
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? (
-                  <MdVisibilityOff size={20} />
-                ) : (
-                  <MdVisibility size={20} />
-                )}
-              </button>
             </div>
           </div>
 
-          {/* Login Button */}
+          {/* Confirm Password Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              পাসওয়ার্ড নিশ্চিত করুন
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <MdLock className="text-gray-400" size={20} />
+              </div>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                disabled={loading}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                placeholder="পাসওয়ার্ড পুনরায় লিখুন"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Register Button */}
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'লগইন হচ্ছে...' : 'লগইন করুন'}
+            {loading ? 'রেজিস্টার হচ্ছে...' : 'রেজিস্টার করুন'}
           </button>
         </form>
 
-        {/* Register Link */}
+        {/* Login Link */}
         <p className="text-center text-sm text-gray-600">
-          নতুন ব্যবহারকারী?{' '}
-          <Link to="/register" className="font-semibold text-green-600 hover:text-green-700">
-            রেজিস্টার করুন
+          ইতিমধ্যে অ্যাকাউন্ট আছে?{' '}
+          <Link to="/login" className="font-semibold text-green-600 hover:text-green-700">
+            লগইন করুন
           </Link>
         </p>
 
@@ -196,4 +232,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

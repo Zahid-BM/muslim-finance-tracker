@@ -17,9 +17,8 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function() {
-      return this.authProvider === 'local';
-    },
+    required: false,  // Not stored for Firebase users (handled by Firebase Auth)
+    select: false,    // Never return password in queries (security)
     minlength: [6, 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে']
   },
   profilePicture: {
@@ -28,8 +27,8 @@ const userSchema = new mongoose.Schema({
   },
   authProvider: {
     type: String,
-    enum: ['local', 'google', 'github'],
-    default: 'local'
+    enum: ['firebase-email', 'firebase-google', 'firebase-github'],
+    default: 'firebase-email'
   },
   firebaseUid: {
     type: String,
@@ -48,6 +47,10 @@ const userSchema = new mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: true
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false
   },
   role: {
     type: String,

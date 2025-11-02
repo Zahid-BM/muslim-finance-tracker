@@ -3,13 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
-import { MdEmail, MdLock, MdPerson } from 'react-icons/md';
+import { MdEmail, MdLock, MdPerson, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const { register, loginWithGoogle } = useAuth();
@@ -20,17 +22,17 @@ const Register = () => {
     
     // Validation
     if (!name || !email || !password) {
-      toast.error('  সকল তথ্য পূরণ করুন');
+      toast.error('সকল তথ্য পূরণ করুন');
       return;
     }
 
     if (password.length < 6) {
-      toast.error('  পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
+      toast.error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error('  পাসওয়ার্ড মিলছে না');
+      toast.error('পাসওয়ার্ড মিলছে না');
       return;
     }
 
@@ -38,10 +40,17 @@ const Register = () => {
     
     try {
       // Register করুন
-      await register(email, password, name);
+      const result = await register(email, password, name);
       
-      // Success - Dashboard এ redirect করুন
-      navigate('/dashboard', { replace: true });
+      if (result && result.needsVerification) {
+        // Redirect to success page
+        navigate('/registration-success', { 
+          replace: true,
+          state: { 
+            email: email
+          }
+        });
+      }
       
     } catch (error) {
       // Error already handled in AuthContext
@@ -162,7 +171,7 @@ const Register = () => {
                 <MdLock className="text-gray-400" size={20} />
               </div>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
@@ -170,6 +179,17 @@ const Register = () => {
                 placeholder="কমপক্ষে ৬ অক্ষর"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? (
+                  <MdVisibilityOff size={20} />
+                ) : (
+                  <MdVisibility size={20} />
+                )}
+              </button>
             </div>
           </div>
 
@@ -183,7 +203,7 @@ const Register = () => {
                 <MdLock className="text-gray-400" size={20} />
               </div>
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={loading}
@@ -191,6 +211,17 @@ const Register = () => {
                 placeholder="পাসওয়ার্ড পুনরায় লিখুন"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              >
+                {showConfirmPassword ? (
+                  <MdVisibilityOff size={20} />
+                ) : (
+                  <MdVisibility size={20} />
+                )}
+              </button>
             </div>
           </div>
 

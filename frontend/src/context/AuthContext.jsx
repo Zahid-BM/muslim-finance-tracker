@@ -5,7 +5,8 @@ import {
   signInWithPopup,
   signOut,
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  sendEmailVerification
 } from 'firebase/auth';
 import { auth, googleProvider } from '../config/firebase';
 import toast from 'react-hot-toast';
@@ -30,37 +31,38 @@ export const AuthProvider = ({ children }) => {
   // Register with Email/Password
   const register = async (email, password, name) => {
     try {
+      // 1. Create Firebase user
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
+      // 2. Update profile with name
       await updateProfile(userCredential.user, {
         displayName: name
       });
 
-      try {
-        await axios.post(`${API_URL}/auth/register`, {
-          name: name,
-          email: email,
-          authProvider: 'local',
-          firebaseUid: userCredential.user.uid
-        });
-      } catch (backendError) {
-        console.log('Backend save error (non-critical):', backendError);
-      }
+      // 3. Send email verification
+      await sendEmailVerification(userCredential.user);
 
-      toast.success('  অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
-      return userCredential.user;
+      // 4. Sign out immediately (user must verify email first)
+      await signOut(auth);
+
+      // Note: Toast will be shown in Register.jsx after redirect
+      
+      return { 
+        success: true, 
+        needsVerification: true 
+      };
       
     } catch (error) {
       console.error('Registration error:', error);
       
       if (error.code === 'auth/email-already-in-use') {
-        toast.error('  এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে');
+        toast.error('এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে');
       } else if (error.code === 'auth/weak-password') {
-        toast.error('  পাসওয়ার্ড আরও শক্তিশালী করুন');
+        toast.error('পাসওয়ার্ড আরও শক্তিশালী করুন (কমপক্ষে ৬ অক্ষর)');
       } else if (error.code === 'auth/invalid-email') {
-        toast.error('  সঠিক ইমেইল দিন');
+        toast.error('সঠিক ইমেইল দিন');
       } else {
-        toast.error('  রেজিস্ট্রেশন করতে সমস্যা হয়েছে');
+        toast.error('রেজিস্ট্রেশন করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
       }
       
       throw error;
@@ -71,19 +73,31 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      toast.success('  সফলভাবে লগইন হয়েছে!');
+      
+      // Check if email is verified
+      if (!userCredential.user.emailVerified) {
+        await signOut(auth);
+        toast.error('আগে ইমেইল verify করুন। আপনার inbox চেক করুন।');
+        throw new Error('Email not verified');
+      }
+      
+      toast.success('সফলভাবে লগইন হয়েছে!');
       return userCredential.user;
+      
     } catch (error) {
       console.error('Login error:', error);
       
-      if (error.code === 'auth/user-not-found') {
-        toast.error('  এই ইমেইলের কোনো অ্যাকাউন্ট নেই');
+      if (error.message === 'Email not verified') {
+        // Already showed toast above
+        throw error;
+      } else if (error.code === 'auth/user-not-found') {
+        toast.error('এই ইমেইলের কোনো অ্যাকাউন্ট নেই');
       } else if (error.code === 'auth/wrong-password') {
-        toast.error('  ভুল পাসওয়ার্ড');
+        toast.error('ভুল পাসওয়ার্ড');
       } else if (error.code === 'auth/invalid-credential') {
-        toast.error('  ভুল ইমেইল বা পাসওয়ার্ড');
+        toast.error('ভুল ইমেইল বা পাসওয়ার্ড');
       } else {
-        toast.error('  লগইন করতে সমস্যা হয়েছে');
+        toast.error('লগইন করতে সমস্যা হয়েছে');
       }
       
       throw error;
@@ -141,13 +155,46 @@ export const AuthProvider = ({ children }) => {
 
   // Listen to auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user && user.emailVerified) {
+        // Sync with MongoDB (Firebase handles auth, MongoDB stores profile)
+        try {
+          const provider = user.providerData[0]?.providerId;
+          let authProvider = 'firebase-email';
+          
+          if (provider === 'google.com') {
+            authProvider = 'firebase-google';
+          } else if (provider === 'github.com') {
+            authProvider = 'firebase-github';
+          }
+          
+          await axios.post(`${API_URL}/auth/register`, {
+            name: user.displayName || user.email.split('@')[0],
+            email: user.email,
+            authProvider: authProvider,
+            firebaseUid: user.uid,
+            isEmailVerified: user.emailVerified
+          });
+          
+          setCurrentUser(user);
+        } catch (error) {
+          console.error('MongoDB sync error:', error);
+          // Continue - user can still use app even if MongoDB sync fails
+          setCurrentUser(user);
+        }
+      } else if (user && !user.emailVerified) {
+        // Email not verified for email/password users
+        await signOut(auth);
+        setCurrentUser(null);
+      } else {
+        setCurrentUser(null);
+      }
+      
       setLoading(false);
     });
 
     return unsubscribe;
-  }, []);
+  }, [API_URL]);
 
   const value = {
     currentUser,
