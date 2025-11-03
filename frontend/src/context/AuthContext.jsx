@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }) => {
           name: result.user.displayName,
           email: result.user.email,
           profilePicture: result.user.photoURL,
-          authProvider: 'google',
+          authProvider: 'firebase-google',
           firebaseUid: result.user.uid
         });
       } catch (backendError) {

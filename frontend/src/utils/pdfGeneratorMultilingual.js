@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { LOGO_BASE64 } from './logoBase64';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode';
 
@@ -115,11 +116,11 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
   reportElement.innerHTML = `
     <div style="width:100%;background:white;color:#333;font-size:12px;line-height:1.5;">
       
-      <div style="display:flex;align-items:center;margin-bottom:20px;border-bottom:3px solid #22c55e;padding-bottom:12px;">
-        <div style="width:50px;height:50px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-right:15px;font-size:32px;flex-shrink:0;">🕌</div>
+      <div style="display:flex;align-items:center;margin-bottom:20px;background:white;border:3px solid #22c55e;border-radius:12px;padding:20px;box-shadow:0 4px 12px rgba(34,197,94,0.2);">
+        <img src="${LOGO_BASE64}" style="width:60px;height:60px;margin-right:15px;object-fit:contain;border-radius:8px;" />
         <div style="flex:1;">
-          <div style="font-size:22px;font-weight:bold;color:#22c55e;margin-bottom:4px;line-height:1.2;">${t.title}</div>
-          <div style="font-size:13px;color:#666;font-weight:500;">${t.subtitle}</div>
+          <div style="font-size:24px;font-weight:bold;color:#1f2937:0 2px 4px rgba(0,0,0,0.2);margin-bottom:4px;line-height:1.2;">${t.title}</div>
+          <div style="font-size:14px;color:#4b5563;font-weight:500;">${t.subtitle}</div>
         </div>
         <div style="text-align:${language === 'ar' || language === 'ur' ? 'left' : 'right'};font-size:10px;">
           <div style="margin-bottom:4px;"><strong>${t.name}:</strong> ${userData.name || 'User'}</div>
@@ -128,8 +129,8 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
       </div>
 
       <div style="margin-bottom:18px;">
-        <h2 style="color:#22c55e;border-left:4px solid #22c55e;padding-left:10px;margin-bottom:10px;font-size:16px;font-weight:bold;">${t.financialSummary}</h2>
-        <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;font-size:11px;">
+        <h2 style="color:#22c55e;border-left:4px solid #22c55e;padding-left:10px;margin-bottom:5px;font-size:16px;font-weight:bold;">${t.financialSummary}</h2>
+        <table style="width:100%;border-collapse:collapse;border:2px solid #e5e7eb;font-size:11px;">
           <thead><tr style="background:linear-gradient(135deg,#22c55e,#16a34a);color:white;">
             <th style="padding:10px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.category}</th>
             <th style="padding:10px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.amount}</th>
@@ -144,8 +145,8 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
               { key: 'monthlySavings', value: stats.monthlyIncome - stats.monthlyExpense }
             ].map((item, i) => `
               <tr style="${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
-                <td style="padding:8px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;">${t[item.key]}</td>
-                <td style="padding:8px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;font-weight:600;color:${item.key.includes('Expense') ? '#ef4444' : item.key.includes('Balance') || item.key.includes('Savings') ? '#22c55e' : '#333'};">
+                <td style="padding:8px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${t[item.key]}</td>
+                <td style="padding:8px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;color:${item.key.includes('Expense') ? '#ef4444' : item.key.includes('Balance') || item.key.includes('Savings') ? '#22c55e' : '#333'};">
                   ${item.value.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}
                 </td>
               </tr>
@@ -156,8 +157,8 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
 
       ${transactions && transactions.length > 0 ? `
         <div style="margin-bottom:18px;">
-          <h2 style="color:#22c55e;border-left:4px solid #22c55e;padding-left:10px;margin-bottom:10px;font-size:16px;font-weight:bold;">${t.transactionHistory}</h2>
-          <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;font-size:9px;">
+          <h2 style="color:#22c55e;border-left:4px solid #22c55e;padding-left:10px;margin-bottom:5px;font-size:16px;font-weight:bold;">${t.transactionHistory}</h2>
+          <table style="width:100%;border-collapse:collapse;border:2px solid #e5e7eb;font-size:9px;">
             <thead><tr style="background:linear-gradient(135deg,#22c55e,#16a34a);color:white;">
               <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.date}</th>
               <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.type}</th>
@@ -169,11 +170,11 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
               ${transactions.slice(0, 8).map((tr, i) => {
                 const cat = categoryMap[tr.category] || tr.category;
                 return `<tr style="${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
-                  <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;">${new Date(tr.date).toLocaleDateString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                  <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;"><span style="color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};font-weight:600;">${tr.type === 'income' ? t.income : t.expense}</span></td>
-                  <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;">${cat}</td>
-                  <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;font-weight:600;color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};">${tr.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                  <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;">${tr.description || '-'}</td>
+                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${new Date(tr.date).toLocaleDateString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
+                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;"><span style="color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};font-weight:600;">${tr.type === 'income' ? t.income : t.expense}</span></td>
+                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${cat}</td>
+                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};">${tr.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
+                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${tr.description || '-'}</td>
                 </tr>`;
               }).join('')}
             </tbody>
@@ -183,8 +184,8 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
 
       ${loans && loans.length > 0 ? `
         <div style="margin-bottom:40px;">
-          <h2 style="color:#f97316;border-left:4px solid #f97316;padding-left:10px;margin-bottom:10px;font-size:16px;font-weight:bold;">${t.loanDetails}</h2>
-          <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;font-size:9px;">
+          <h2 style="color:#f97316;border-left:4px solid #f97316;padding-left:10px;margin-bottom:5px;font-size:16px;font-weight:bold;">${t.loanDetails}</h2>
+          <table style="width:100%;border-collapse:collapse;border:2px solid #e5e7eb;font-size:9px;">
             <thead><tr style="background:linear-gradient(135deg,#f97316,#ea580c);color:white;">
               <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.loanType}</th>
               <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.person}</th>
@@ -194,25 +195,25 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
             </tr></thead>
             <tbody>
               ${loans.slice(0, 5).map((ln, i) => `<tr style="${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
-                <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;"><span style="color:${ln.type === 'given' ? '#22c55e' : '#ef4444'};font-weight:600;">${ln.type === 'given' ? t.given : t.taken}</span></td>
-                <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;">${ln.personName}</td>
-                <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;font-weight:600;">${ln.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;font-weight:600;color:${ln.remainingAmount > 0 ? '#ef4444' : '#22c55e'};">${ln.remainingAmount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                <td style="padding:6px;border:1px solid #e2e8f0;text-align:center;vertical-align:middle;"><span style="color:${ln.status === 'paid' ? '#22c55e' : ln.status === 'partial' ? '#f59e0b' : '#ef4444'};font-weight:600;">${ln.status === 'paid' ? t.paid : ln.status === 'partial' ? t.partial : t.pending}</span></td>
+                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;"><span style="color:${ln.type === 'given' ? '#22c55e' : '#ef4444'};font-weight:600;">${ln.type === 'given' ? t.given : t.taken}</span></td>
+                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${ln.personName}</td>
+                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;">${ln.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
+                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;color:${ln.remainingAmount > 0 ? '#ef4444' : '#22c55e'};">${ln.remainingAmount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
+                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;"><span style="color:${ln.status === 'paid' ? '#22c55e' : ln.status === 'partial' ? '#f59e0b' : '#ef4444'};font-weight:600;">${ln.status === 'paid' ? t.paid : ln.status === 'partial' ? t.partial : t.pending}</span></td>
               </tr>`).join('')}
             </tbody>
           </table>
         </div>
       ` : ''}
 
-      <div style="border-top:2px solid #d1d5db;padding-top:20px;margin-top:30px;text-align:center;">
-        ${qrCodeDataUrl ? `<div style="margin:0 auto 12px;display:inline-block;"><img src="${qrCodeDataUrl}" style="width:100px;height:100px;border:2px solid #333;border-radius:4px;display:block;" alt="QR"/></div>` : ''}
-        <div style="font-size:10px;color:#374151;font-weight:600;margin-bottom:10px;">${t.scanToVisit}</div>
-        <div style="font-size:9px;color:#6b7280;margin-bottom:12px;">${t.pageOf} 1 ${t.of} 1</div>
-        <div style="font-size:9px;color:#6b7280;margin-bottom:10px;">${t.generatedOn} ${dateStr} ${t.at} ${timeStr}</div>
+      <div style="background:linear-gradient(135deg,#f0fdf4 0%,#ecfeff 100%);border-top:4px solid #22c55e;border-radius:12px;padding:20px;margin-top:25px;text-align:left;box-shadow:0 -2px 8px rgba(34,197,94,0.1);">
+        ${qrCodeDataUrl ? `<div style="margin:0 0 10px 0;display:inline-block;"><img src="${qrCodeDataUrl}" style="width:85px;height:85px;border:3px solid #22c55e;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);border-radius:4px;display:block;" alt="QR"/></div>` : ''}
+        <div style="font-size:11px;color:#374151;font-weight:600;margin-bottom:6px;">${t.scanToVisit}</div>
+        <div style="font-size:10px;color:#6b7280;margin-bottom:6px;line-height:1.3;">${t.pageOf} 1 ${t.of} 1</div>
+        <div style="font-size:9px;color:#6b7280;margin-bottom:5px;">${t.generatedOn} ${dateStr} ${t.at} ${timeStr}</div>
         <div style="font-size:10px;color:#374151;font-weight:600;margin-bottom:4px;">${t.directVisit}:</div>
-        <div style="font-size:11px;color:#22c55e;font-weight:700;margin-bottom:12px;">${t.website}</div>
-        <div style="font-size:9px;color:#6b7280;font-style:italic;margin-bottom:10px;">${t.tagline}</div>
+        <div style="font-size:11px;color:#22c55e;font-weight:700;margin-bottom:6px;">${t.website}</div>
+        <div style="font-size:9px;color:#6b7280;font-style:italic;margin-bottom:5px;">${t.tagline}</div>
         <div style="font-size:8px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:10px;">${t.copyright}</div>
       </div>
 
