@@ -24,7 +24,7 @@ const translations = {
     financialSummary: 'আর্থিক সারসংক্ষেপ', category: 'বিষয়', amount: 'পরিমাণ (৳)',
     totalIncome: 'মোট আয়', totalExpense: 'মোট খরচ', currentBalance: 'বর্তমান ব্যালেন্স',
     monthlyIncome: 'মাসিক আয়', monthlyExpense: 'মাসিক খরচ', monthlySavings: 'মাসিক সঞ্চয়',
-    transactionHistory: 'লেনদেনের ইতিহাস (সর্বশেষ ৮টি)', date: 'তারিখ', type: 'ধরন', income: 'আয়',
+    transactionHistory: 'লেনদেনের ইতিহাস', date: 'তারিখ', type: 'ধরন', income: 'আয়',
     expense: 'খরচ', description: 'বিবরণ', loanDetails: 'ঋণের বিবরণ', loanType: 'ধরন',
     person: 'ব্যক্তি', remaining: 'বাকি', status: 'স্ট্যাটাস', given: 'দেওয়া', taken: 'নেওয়া',
     paid: 'পরিশোধিত', partial: 'আংশিক', pending: 'বকেয়া',
@@ -98,141 +98,271 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
     year: 'numeric', month: 'long', day: 'numeric'
   });
   const timeStr = now.toLocaleTimeString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US', {
-    hour: '2-digit', minute: '2-digit', hour12: language !== 'ar'
+    hour: '2-digit', minute: '2-digit', hour12: true
   });
+
+  // Currency symbol based on language
+  const currencySymbol = language === 'bn' ? '৳' : language === 'ar' ? 'ر.س' : language === 'hi' ? '₹' : language === 'ur' ? 'Rs' : '$';
 
   let qrCodeDataUrl = '';
   try {
     qrCodeDataUrl = await QRCode.toDataURL('https://muslim-finance-tracker.vercel.app', {
-      width: 400, margin: 2, errorCorrectionLevel: 'H', color: { dark: '#000000', light: '#FFFFFF' }
+      width: 400, margin: 2, errorCorrectionLevel: 'H'
     });
   } catch (error) {
-    console.error('QR Code generation failed:', error);
+    console.error('QR generation failed:', error);
   }
 
-  const reportElement = document.createElement('div');
-  reportElement.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;padding:30px;background:white;font-family:"Noto Sans Bengali","Noto Sans Arabic","Noto Sans Devanagari","Noto Nastaliq Urdu","Helvetica","Arial",sans-serif;box-sizing:border-box;';
+  const contentElement = document.createElement('div');
+  contentElement.style.cssText = 'position:fixed;left:-10000px;width:750px;padding:30px;background:white;font-family:Arial,sans-serif;';
 
-  reportElement.innerHTML = `
-    <div style="width:100%;background:white;color:#333;font-size:12px;line-height:1.5;">
-      
-      <div style="display:flex;align-items:center;margin-bottom:20px;background:white;border:3px solid #22c55e;border-radius:12px;padding:20px;box-shadow:0 4px 12px rgba(34,197,94,0.2);">
-        <img src="${LOGO_BASE64}" style="width:60px;height:60px;margin-right:15px;object-fit:contain;border-radius:8px;" />
-        <div style="flex:1;">
-          <div style="font-size:24px;font-weight:bold;color:#1f2937:0 2px 4px rgba(0,0,0,0.2);margin-bottom:4px;line-height:1.2;">${t.title}</div>
-          <div style="font-size:14px;color:#4b5563;font-weight:500;">${t.subtitle}</div>
-        </div>
-        <div style="text-align:${language === 'ar' || language === 'ur' ? 'left' : 'right'};font-size:10px;">
-          <div style="margin-bottom:4px;"><strong>${t.name}:</strong> ${userData.name || 'User'}</div>
-          <div><strong>${t.email}:</strong> ${userData.email || ''}</div>
-        </div>
-      </div>
+  const financialRows = [
+    { label: t.totalIncome, value: stats.totalIncome || 0, color: '#111827' },
+    { label: t.totalExpense, value: stats.totalExpense || 0, color: '#ef4444' },
+    { label: t.currentBalance, value: stats.balance || 0, color: '#22c55e' },
+    { label: t.monthlyIncome, value: stats.monthlyIncome || 0, color: '#111827' },
+    { label: t.monthlyExpense, value: stats.monthlyExpense || 0, color: '#ef4444' },
+    { label: t.monthlySavings, value: (stats.monthlyIncome || 0) - (stats.monthlyExpense || 0), color: '#22c55e' }
+  ];
 
-      <div style="margin-bottom:18px;">
-        <h2 style="color:#22c55e;border-left:4px solid #22c55e;padding-left:10px;margin-bottom:5px;font-size:16px;font-weight:bold;">${t.financialSummary}</h2>
-        <table style="width:100%;border-collapse:collapse;border:2px solid #e5e7eb;font-size:11px;">
-          <thead><tr style="background:linear-gradient(135deg,#22c55e,#16a34a);color:white;">
-            <th style="padding:10px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.category}</th>
-            <th style="padding:10px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.amount}</th>
-          </tr></thead>
-          <tbody>
-            ${[
-              { key: 'totalIncome', value: stats.totalIncome },
-              { key: 'totalExpense', value: stats.totalExpense },
-              { key: 'currentBalance', value: stats.balance },
-              { key: 'monthlyIncome', value: stats.monthlyIncome },
-              { key: 'monthlyExpense', value: stats.monthlyExpense },
-              { key: 'monthlySavings', value: stats.monthlyIncome - stats.monthlyExpense }
-            ].map((item, i) => `
-              <tr style="${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
-                <td style="padding:8px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${t[item.key]}</td>
-                <td style="padding:8px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;color:${item.key.includes('Expense') ? '#ef4444' : item.key.includes('Balance') || item.key.includes('Savings') ? '#22c55e' : '#333'};">
-                  ${item.value.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
+  // Format transactions with proper locale dates
+  const txRows = (transactions || []).map(tr => {
+    const trDate = new Date(tr.date);
+    return {
+      date: trDate.toLocaleDateString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US', {
+        year: 'numeric', month: '2-digit', day: '2-digit'
+      }),
+      type: tr.type || 'expense',
+      typeLabel: tr.type === 'income' ? t.income : t.expense,
+      category: categoryMap[tr.category] || tr.category || '-',
+      amount: tr.amount || 0,
+      description: tr.description || '-'
+    };
+  });
 
-      ${transactions && transactions.length > 0 ? `
-        <div style="margin-bottom:18px;">
-          <h2 style="color:#22c55e;border-left:4px solid #22c55e;padding-left:10px;margin-bottom:5px;font-size:16px;font-weight:bold;">${t.transactionHistory}</h2>
-          <table style="width:100%;border-collapse:collapse;border:2px solid #e5e7eb;font-size:9px;">
-            <thead><tr style="background:linear-gradient(135deg,#22c55e,#16a34a);color:white;">
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.date}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.type}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.category}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.amount}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.description}</th>
-            </tr></thead>
-            <tbody>
-              ${transactions.slice(0, 8).map((tr, i) => {
-                const cat = categoryMap[tr.category] || tr.category;
-                return `<tr style="${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${new Date(tr.date).toLocaleDateString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;"><span style="color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};font-weight:600;">${tr.type === 'income' ? t.income : t.expense}</span></td>
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${cat}</td>
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};">${tr.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${tr.description || '-'}</td>
-                </tr>`;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-      ` : ''}
+  let tablesHTML = `<section style="margin-bottom:30px;">
+    <h2 style="font-size:20px;font-weight:700;color:#111827;margin:0 0 16px 0;">${t.financialSummary}</h2>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="background:#90ee90;">
+          <th style="padding:14px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-size:15px;font-weight:600;">${t.category}</th>
+          <th style="padding:14px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-size:15px;font-weight:600;">${t.amount}</th>
+        </tr>
+      </thead>
+      <tbody>`;
 
-      ${loans && loans.length > 0 ? `
-        <div style="margin-bottom:40px;">
-          <h2 style="color:#f97316;border-left:4px solid #f97316;padding-left:10px;margin-bottom:5px;font-size:16px;font-weight:bold;">${t.loanDetails}</h2>
-          <table style="width:100%;border-collapse:collapse;border:2px solid #e5e7eb;font-size:9px;">
-            <thead><tr style="background:linear-gradient(135deg,#f97316,#ea580c);color:white;">
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.loanType}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.person}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.amount}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.remaining}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.status}</th>
-            </tr></thead>
-            <tbody>
-              ${loans.slice(0, 5).map((ln, i) => `<tr style="${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;"><span style="color:${ln.type === 'given' ? '#22c55e' : '#ef4444'};font-weight:600;">${ln.type === 'given' ? t.given : t.taken}</span></td>
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${ln.personName}</td>
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;">${ln.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;color:${ln.remainingAmount > 0 ? '#ef4444' : '#22c55e'};">${ln.remainingAmount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;"><span style="color:${ln.status === 'paid' ? '#22c55e' : ln.status === 'partial' ? '#f59e0b' : '#ef4444'};font-weight:600;">${ln.status === 'paid' ? t.paid : ln.status === 'partial' ? t.partial : t.pending}</span></td>
-              </tr>`).join('')}
-            </tbody>
-          </table>
-        </div>
-      ` : ''}
+  financialRows.forEach((row, i) => {
+    const formattedValue = currencySymbol + ' ' + Number(row.value).toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US');
+    tablesHTML += `<tr style="background:${i % 2 === 0 ? '#fff' : '#f9fafb'};">
+      <td style="padding:14px;border-bottom:1px solid #e5e7eb;font-size:14px;text-align:center;vertical-align:middle;">${row.label}</td>
+      <td style="padding:14px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;font-size:14px;font-weight:600;color:${row.color};">${formattedValue}</td>
+    </tr>`;
+  });
 
-      <div style="background:linear-gradient(135deg,#f0fdf4 0%,#ecfeff 100%);border-top:4px solid #22c55e;border-radius:12px;padding:20px;margin-top:25px;text-align:left;box-shadow:0 -2px 8px rgba(34,197,94,0.1);">
-        ${qrCodeDataUrl ? `<div style="margin:0 0 10px 0;display:inline-block;"><img src="${qrCodeDataUrl}" style="width:85px;height:85px;border:3px solid #22c55e;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);border-radius:4px;display:block;" alt="QR"/></div>` : ''}
-        <div style="font-size:11px;color:#374151;font-weight:600;margin-bottom:6px;">${t.scanToVisit}</div>
-        <div style="font-size:10px;color:#6b7280;margin-bottom:6px;line-height:1.3;">${t.pageOf} 1 ${t.of} 1</div>
-        <div style="font-size:9px;color:#6b7280;margin-bottom:5px;">${t.generatedOn} ${dateStr} ${t.at} ${timeStr}</div>
-        <div style="font-size:10px;color:#374151;font-weight:600;margin-bottom:4px;">${t.directVisit}:</div>
-        <div style="font-size:11px;color:#22c55e;font-weight:700;margin-bottom:6px;">${t.website}</div>
-        <div style="font-size:9px;color:#6b7280;font-style:italic;margin-bottom:5px;">${t.tagline}</div>
-        <div style="font-size:8px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:10px;">${t.copyright}</div>
-      </div>
+  tablesHTML += `</tbody></table></section>`;
 
-    </div>
-  `;
+  if (txRows.length > 0) {
+    tablesHTML += `<section style="margin-bottom:30px;">
+      <h2 style="font-size:20px;font-weight:700;color:#111827;margin:0 0 16px 0;">${t.transactionHistory}</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background:#90ee90;">
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.date}</th>
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.type}</th>
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.category}</th>
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.amount}</th>
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.description}</th>
+          </tr>
+        </thead>
+        <tbody>`;
 
-  document.body.appendChild(reportElement);
+    txRows.forEach(tr => {
+      const formattedAmount = currencySymbol + ' ' + Number(tr.amount).toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US');
+      const typeColor = tr.type === 'income' ? '#22c55e' : '#ef4444';
+      tablesHTML += `<tr>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;">${tr.date}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;color:${typeColor};font-weight:600;">${tr.typeLabel}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;">${tr.category}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;">${formattedAmount}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;">${tr.description}</td>
+      </tr>`;
+    });
+
+    tablesHTML += `</tbody></table></section>`;
+  }
+
+  if (loans && loans.length > 0) {
+    tablesHTML += `<section>
+      <h2 style="font-size:20px;font-weight:700;color:#111827;margin:0 0 16px 0;">${t.loanDetails}</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background:#90ee90;">
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.loanType}</th>
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.person}</th>
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.amount}</th>
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.remaining}</th>
+            <th style="padding:12px 8px;text-align:center;vertical-align:middle;border-bottom:2px solid #d1d5db;font-weight:600;">${t.status}</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    loans.slice(0, 5).forEach(ln => {
+      const lnAmount = currencySymbol + ' ' + Number(ln.amount).toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US');
+      const lnRemaining = currencySymbol + ' ' + Number(ln.remainingAmount || 0).toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US');
+      const typeColor = ln.type === 'given' ? '#22c55e' : '#ef4444';
+      const remainColor = ln.remainingAmount > 0 ? '#ef4444' : '#22c55e';
+      const statusColor = ln.status === 'paid' ? '#22c55e' : (ln.status === 'partial' ? '#f59e0b' : '#ef4444');
+      const statusLabel = ln.status === 'paid' ? t.paid : (ln.status === 'partial' ? t.partial : t.pending);
+      const typeLabel = ln.type === 'given' ? t.given : t.taken;
+
+      tablesHTML += `<tr>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;color:${typeColor};font-weight:600;">${typeLabel}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;">${ln.personName || '-'}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;">${lnAmount}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;color:${remainColor};font-weight:600;">${lnRemaining}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle;color:${statusColor};font-weight:600;">${statusLabel}</td>
+      </tr>`;
+    });
+
+    tablesHTML += `</tbody></table></section>`;
+  }
+
+  contentElement.innerHTML = `<div style="max-width:700px;margin:0 auto;">${tablesHTML}</div>`;
+  document.body.appendChild(contentElement);
 
   try {
-    await new Promise(r => setTimeout(r, 2000));
-    const canvas = await html2canvas(reportElement, { scale: 2.5, useCORS: true, allowTaint: false, logging: false, width: 794, backgroundColor: '#fff', imageTimeout: 0 });
-    document.body.removeChild(reportElement);
+    await new Promise(r => setTimeout(r, 1000));
+
+    const canvas = await html2canvas(contentElement, {
+      scale: 2.5,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      windowWidth: 750
+    });
+
+    document.body.removeChild(contentElement);
 
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgW = 210, imgH = (canvas.height * imgW) / canvas.width;
-    pdf.addImage(canvas, 'PNG', 0, 0, imgW, imgH, '', 'FAST');
+    const pdfW = 210;
+    const pdfH = 297;
+    const headerH = 38;
+    const footerH = 40;
+    const contentH = pdfH - headerH - footerH - 3;
+
+    const canvasHeightMM = (canvas.height * pdfW) / canvas.width;
+    const totalPages = Math.ceil(canvasHeightMM / contentH);
+
+    const addHeader = async (pageNum) => {
+      const headerEl = document.createElement('div');
+      headerEl.style.cssText = 'position:fixed;left:-10000px;width:794px;height:144px;background:white;padding:15px 20px;font-family:Arial,sans-serif;box-sizing:border-box;';
+      headerEl.innerHTML = `
+        <table style="width:100%;height:calc(100% - 22px);border-collapse:collapse;table-layout:fixed;">
+          <tr>
+            <td style="width:110px;vertical-align:middle;padding:0;">
+              <div style="display:flex;align-items:flex-start;height:55px;">
+                <img src="${LOGO_BASE64}" style="width:90px;height:auto;max-height:55px;display:block;" />
+              </div>
+            </td>
+            <td style="vertical-align:middle;padding:0 0 0 15px;">
+              <div style="display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-size:24px;font-weight:700;color:#2d3748;line-height:1.15;margin-bottom:3px;">${t.title}</div>
+                <div style="font-size:12px;color:#6b7280;line-height:1.3;margin-bottom:3px;">${t.subtitle}</div>
+                <div style="font-size:10px;color:#9ca3af;line-height:1.2;">${t.generatedOn}: ${dateStr} | ${t.at} ${timeStr}</div>
+              </div>
+            </td>
+            <td style="text-align:right;vertical-align:middle;padding:0;font-size:11px;color:#a0aec0;line-height:1.6;width:220px;">
+              <div><strong>${t.name}:</strong> ${userData.name || 'User'}</div>
+              <div><strong>${t.email}:</strong> ${userData.email || ''}</div>
+            </td>
+          </tr>
+        </table>
+        <div style="position:absolute;bottom:5px;left:15px;right:15px;height:1px;background:#e2e8f0;"></div>
+      `;
+      document.body.appendChild(headerEl);
+      
+      await new Promise(r => setTimeout(r, 100));
+      
+      const headerCanvas = await html2canvas(headerEl, { 
+        scale: 2.5, 
+        backgroundColor: '#ffffff', 
+        width: 794,
+        windowWidth: 794
+      });
+      document.body.removeChild(headerEl);
+      
+      const headerImgData = headerCanvas.toDataURL('image/png');
+      pdf.addImage(headerImgData, 'PNG', 0, 0, pdfW, headerH);
+    };
+
+    const addFooter = async (pageNum) => {
+      const footerY = pdfH - footerH;
+      
+      const footerEl = document.createElement('div');
+      footerEl.style.cssText = 'position:fixed;left:-10000px;width:794px;height:152px;background:white;padding:12px 20px;font-family:Arial,sans-serif;box-sizing:border-box;';
+      footerEl.innerHTML = `
+        <div style="border-top:1px solid #e2e8f0;padding:12px 0;height:100%;position:relative;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="vertical-align:top;padding-right:20px;padding-left:10px;">
+                <div style="font-size:18px;font-weight:700;color:#7ed957;margin-bottom:5px;line-height:1.2;">${t.title}</div>
+                <div style="font-size:11px;color:#6b7280;margin-bottom:7px;line-height:1.3;">${t.tagline}</div>
+                <div style="font-size:10px;color:#a0aec0;margin-bottom:5px;line-height:1.3;">${t.directVisit}: ${t.website}</div>
+                <div style="font-size:9px;color:#cbd5e0;line-height:1.2;">${t.copyright}</div>
+              </td>
+              ${qrCodeDataUrl ? `<td style="width:90px;text-align:center;vertical-align:top;padding-right:10px;">
+                <img src="${qrCodeDataUrl}" style="width:75px;height:75px;border:1px solid #e2e8f0;display:block;margin:0 auto 5px auto;" />
+                <div style="font-size:9px;color:#9ca3af;line-height:1.3;">${t.scanToVisit}</div>
+              </td>` : ''}
+            </tr>
+          </table>
+          <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;">
+            <div style="font-size:10px;color:#6b7280;font-weight:600;">${t.pageOf} ${pageNum} ${t.of} ${totalPages}</div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(footerEl);
+      
+      await new Promise(r => setTimeout(r, 100));
+      
+      const footerCanvas = await html2canvas(footerEl, { 
+        scale: 2.5, 
+        backgroundColor: '#ffffff', 
+        width: 794,
+        windowWidth: 794
+      });
+      document.body.removeChild(footerEl);
+      
+      const footerImgData = footerCanvas.toDataURL('image/png');
+      pdf.addImage(footerImgData, 'PNG', 0, footerY, pdfW, footerH);
+    };
+
+    for (let page = 1; page <= totalPages; page++) {
+      if (page > 1) pdf.addPage();
+      
+      await addHeader(page);
+      
+      const srcY = (page - 1) * contentH * (canvas.width / pdfW);
+      const srcH = Math.min(contentH * (canvas.width / pdfW), canvas.height - srcY);
+      
+      const tmpCanvas = document.createElement('canvas');
+      tmpCanvas.width = canvas.width;
+      tmpCanvas.height = srcH;
+      const ctx = tmpCanvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+      ctx.drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, canvas.width, srcH);
+      
+      const pageImgData = tmpCanvas.toDataURL('image/png');
+      const imgH = (srcH * pdfW) / canvas.width;
+      
+      pdf.addImage(pageImgData, 'PNG', 0, headerH, pdfW, imgH);
+      
+      await addFooter(page);
+    }
+
     return pdf;
   } catch (error) {
-    if (document.body.contains(reportElement)) document.body.removeChild(reportElement);
+    if (document.body.contains(contentElement)) document.body.removeChild(contentElement);
     throw error;
   }
 };

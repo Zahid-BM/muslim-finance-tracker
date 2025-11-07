@@ -129,11 +129,11 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
       </div>
 
       <div style="margin-bottom:18px;">
-        <h2 style="color:#22c55e;border-left:4px solid #22c55e;padding-left:10px;margin-bottom:5px;font-size:16px;font-weight:bold;">${t.financialSummary}</h2>
-        <table style="width:100%;border-collapse:collapse;border:2px solid #e5e7eb;font-size:11px;">
-          <thead><tr style="background:linear-gradient(135deg,#22c55e,#16a34a);color:white;">
-            <th style="padding:10px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.category}</th>
-            <th style="padding:10px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.amount}</th>
+        <h2 style="font-size:18px;font-weight:700;color:#2d3748;margin:25px 0 15px 0;">${t.financialSummary}</h2>
+        <table style="width:100%;border-collapse:collapse;border:1.5px solid #e2e8f0;font-size:11px;">
+          <thead><tr style="background:#90ee90;">
+            <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.category}</th>
+            <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.amount}</th>
           </tr></thead>
           <tbody>
             ${[
@@ -144,9 +144,9 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
               { key: 'monthlyExpense', value: stats.monthlyExpense },
               { key: 'monthlySavings', value: stats.monthlyIncome - stats.monthlyExpense }
             ].map((item, i) => `
-              <tr style="${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
-                <td style="padding:8px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${t[item.key]}</td>
-                <td style="padding:8px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;color:${item.key.includes('Expense') ? '#ef4444' : item.key.includes('Balance') || item.key.includes('Savings') ? '#22c55e' : '#333'};">
+              <tr style="height:55px;${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
+                <td style="padding:20px 10px;border:1.5px solid #e2e8f0;text-align:center;">${t[item.key]}</td>
+                <td style="padding:20px 10px;border:1.5px solid #e2e8f0;text-align:center;font-weight:600;color:${item.key.includes('Expense') ? '#ef4444' : item.key.includes('Balance') || item.key.includes('Savings') ? '#22c55e' : '#333'};">
                   ${item.value.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}
                 </td>
               </tr>
@@ -157,24 +157,24 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
 
       ${transactions && transactions.length > 0 ? `
         <div style="margin-bottom:18px;">
-          <h2 style="color:#22c55e;border-left:4px solid #22c55e;padding-left:10px;margin-bottom:5px;font-size:16px;font-weight:bold;">${t.transactionHistory}</h2>
-          <table style="width:100%;border-collapse:collapse;border:2px solid #e5e7eb;font-size:9px;">
-            <thead><tr style="background:linear-gradient(135deg,#22c55e,#16a34a);color:white;">
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.date}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.type}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.category}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.amount}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.description}</th>
+          <h2 style="font-size:18px;font-weight:700;color:#2d3748;margin:25px 0 15px 0;">${t.transactionHistory}</h2>
+          <table style="width:100%;border-collapse:collapse;border:1.5px solid #e2e8f0;font-size:9px;">
+            <thead><tr style="background:#90ee90;">
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.date}</th>
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.type}</th>
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.category}</th>
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.amount}</th>
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.description}</th>
             </tr></thead>
             <tbody>
               ${transactions.slice(0, 8).map((tr, i) => {
                 const cat = categoryMap[tr.category] || tr.category;
-                return `<tr style="${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${new Date(tr.date).toLocaleDateString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;"><span style="color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};font-weight:600;">${tr.type === 'income' ? t.income : t.expense}</span></td>
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${cat}</td>
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};">${tr.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                  <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${tr.description || '-'}</td>
+                return `<tr style="height:55px;${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
+                  <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;">${new Date(tr.date).toLocaleDateString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
+                  <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;"><span style="color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};font-weight:600;">${tr.type === 'income' ? t.income : t.expense}</span></td>
+                  <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;">${cat}</td>
+                  <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;font-weight:600;color:${tr.type === 'income' ? '#22c55e' : '#ef4444'};">${tr.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
+                  <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;">${tr.description || '-'}</td>
                 </tr>`;
               }).join('')}
             </tbody>
@@ -184,22 +184,22 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
 
       ${loans && loans.length > 0 ? `
         <div style="margin-bottom:40px;">
-          <h2 style="color:#f97316;border-left:4px solid #f97316;padding-left:10px;margin-bottom:5px;font-size:16px;font-weight:bold;">${t.loanDetails}</h2>
-          <table style="width:100%;border-collapse:collapse;border:2px solid #e5e7eb;font-size:9px;">
-            <thead><tr style="background:linear-gradient(135deg,#f97316,#ea580c);color:white;">
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.loanType}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.person}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.amount}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.remaining}</th>
-              <th style="padding:8px;text-align:center;vertical-align:middle;border:1px solid #cbd5e0;font-weight:600;">${t.status}</th>
+          <h2 style="font-size:18px;font-weight:700;color:#2d3748;margin:25px 0 15px 0;">${t.loanDetails}</h2>
+          <table style="width:100%;border-collapse:collapse;border:1.5px solid #e2e8f0;font-size:9px;">
+            <thead><tr style="background:#90ee90;">
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.loanType}</th>
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.person}</th>
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.amount}</th>
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.remaining}</th>
+              <th style="padding:12px;text-align:center;vertical-align:middle;border:none;border-bottom:1px solid #d1d5db;font-weight:600;font-size:14px;color:#111827;">${t.status}</th>
             </tr></thead>
             <tbody>
-              ${loans.slice(0, 5).map((ln, i) => `<tr style="${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;"><span style="color:${ln.type === 'given' ? '#22c55e' : '#ef4444'};font-weight:600;">${ln.type === 'given' ? t.given : t.taken}</span></td>
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;">${ln.personName}</td>
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;">${ln.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;font-weight:600;color:${ln.remainingAmount > 0 ? '#ef4444' : '#22c55e'};">${ln.remainingAmount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
-                <td style="padding:6px;border:2px solid #e5e7eb;text-align:center;vertical-align:middle;"><span style="color:${ln.status === 'paid' ? '#22c55e' : ln.status === 'partial' ? '#f59e0b' : '#ef4444'};font-weight:600;">${ln.status === 'paid' ? t.paid : ln.status === 'partial' ? t.partial : t.pending}</span></td>
+              ${loans.slice(0, 5).map((ln, i) => `<tr style="height:55px;${i % 2 === 0 ? 'background:#f8fafc;' : 'background:white;'}">
+                <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;"><span style="color:${ln.type === 'given' ? '#22c55e' : '#ef4444'};font-weight:600;">${ln.type === 'given' ? t.given : t.taken}</span></td>
+                <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;">${ln.personName}</td>
+                <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;font-weight:600;">${ln.amount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
+                <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;font-weight:600;color:${ln.remainingAmount > 0 ? '#ef4444' : '#22c55e'};">${ln.remainingAmount.toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US')}</td>
+                <td style="padding:6px;border:1.5px solid #e2e8f0;text-align:center;vertical-align:middle;"><span style="color:${ln.status === 'paid' ? '#22c55e' : ln.status === 'partial' ? '#f59e0b' : '#ef4444'};font-weight:600;">${ln.status === 'paid' ? t.paid : ln.status === 'partial' ? t.partial : t.pending}</span></td>
               </tr>`).join('')}
             </tbody>
           </table>
@@ -229,7 +229,20 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
 
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgW = 210, imgH = (canvas.height * imgW) / canvas.width;
-    pdf.addImage(canvas, 'PNG', 0, 0, imgW, imgH, '', 'FAST');
+    // Multi-page support
+    const maxPageHeight = 280; // mm, leave space for header/footer
+    if (imgH > maxPageHeight) {
+      let currentY = 0;
+      let pageNum = 1;
+      while (currentY < imgH) {
+        if (pageNum > 1) pdf.addPage();
+        pdf.addImage(canvas, 'PNG', 0, -currentY, imgW, imgH, '', 'FAST');
+        currentY += maxPageHeight;
+        pageNum++;
+      }
+    } else {
+      pdf.addImage(canvas, 'PNG', 0, 0, imgW, imgH, '', 'FAST');
+    }
     return pdf;
   } catch (error) {
     if (document.body.contains(reportElement)) document.body.removeChild(reportElement);
