@@ -322,6 +322,61 @@ src/
 
 ---
 
+
+
+---
+
+## 🌍 CRITICAL ADDITION: Full Site i18n (Internationalization)
+
+**Priority:** HIGH (Should be done AFTER Step 42, BEFORE Step 46)
+
+### Step 42.5: i18n Implementation (NEW)
+
+**Duration:** 6-8 hours
+
+**Goal:** Users see entire website in their language automatically
+
+#### Implementation:
+```bash
+npm install react-i18next i18next i18next-browser-languagedetector
+```
+
+#### Features:
+1. ✅ Auto-detect user location (IP or browser language)
+2. ✅ Translate ALL UI elements (buttons, labels, messages)
+3. ✅ Language switcher (flag icons)
+4. ✅ Persistent preference (localStorage)
+5. ✅ RTL support (Arabic, Urdu)
+
+#### Translation Files:
+```
+src/locales/
+├── bn/translation.json (বাংলা)
+├── en/translation.json (English)
+├── ar/translation.json (العربية)
+├── hi/translation.json (हिन्दी)
+├── ur/translation.json (اردو)
+└── ja/translation.json (日本語 - future)
+```
+
+#### Coverage:
+- All page titles
+- All button labels
+- All form placeholders
+- All error messages
+- All success messages
+- All table headers
+- Navigation menu
+- Footer text
+- Islamic masail (already in progress)
+
+**Files to modify:**
+- All .jsx files (wrap text with `{t('key')}`)
+- Create i18n config
+- Add language switcher component
+
+---
+
 ## 🤲 Important Notes
 
 1. ✅ **Authenticity First** - All masail verified from authentic sources
