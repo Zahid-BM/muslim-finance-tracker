@@ -18,6 +18,7 @@ app.use(cookieParser());
 const authRoutes = require('./routes/authRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const loanRoutes = require('./routes/loanRoutes');
+const zakatRoutes = require('./routes/zakat');
 
 app.get('/', (req, res) => {
   res.json({
@@ -48,6 +49,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/loans', loanRoutes);
+app.use('/api/zakat', zakatRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
