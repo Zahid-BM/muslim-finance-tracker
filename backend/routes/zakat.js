@@ -26,13 +26,13 @@ router.get('/prices', async (req, res) => {
  */
 router.post('/calculate', async (req, res) => {
   try {
-    const { assets, liabilities, goldPrice, silverPrice } = req.body;
+    const { assets, liabilities, goldSellingPrice, silverSellingPrice } = req.body;
     
     // Calculate nisab threshold
-    const nisabData = calculateNisabThreshold(goldPrice, silverPrice);
+    const nisabData = calculateNisabThreshold(goldSellingPrice, silverSellingPrice);
     
     // Calculate zakat
-    const result = calculateZakat(assets, liabilities, nisabData.recommended);
+    const result = calculateZakat(assets, liabilities, goldSellingPrice, silverSellingPrice);
     
     res.json({
       success: true,

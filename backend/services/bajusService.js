@@ -6,16 +6,16 @@ const axios = require('axios');
  * Source: https://www.bajus.org/gold-price
  */
 
-// Current prices (Update from BAJUS website)
+// Current prices (Updated Nov 9, 2025 from BAJUS website)
 const FALLBACK_PRICES = {
   // Gold - Traditional (সনাতন) per gram
   goldTraditional: 11761, // ৳11,761/gram (Nov 8, 2024)
   
-  // Silver - Traditional per gram
-  // Check BAJUS: https://www.bajus.org/gold-price
-  silverTraditional: 160, // Approximate ৳160/gram (verify from BAJUS)
+  // Silver - Traditional per gram (BAJUS Nov 9, 2025)
+  // Source: https://www.bajus.org/gold-price
+  silverTraditional: 223, // ৳223/gram (BAJUS current - Nov 9, 2025)
   
-  lastUpdate: '2024-11-08',
+  lastUpdate: '2025-11-09',
   source: 'BAJUS (Bangladesh Jewellers Association)'
 };
 
@@ -39,8 +39,8 @@ const getBAJUSPrices = async () => {
         goldPerVori: Math.round(FALLBACK_PRICES.goldTraditional * VORI_TO_GRAM),
         silverPerVori: Math.round(FALLBACK_PRICES.silverTraditional * VORI_TO_GRAM),
         // After 20% deduction (selling price)
-        goldSellingPerGram: Math.round(FALLBACK_PRICES.goldTraditional * (1 - SELLING_PRICE_DEDUCTION)),
-        silverSellingPerGram: Math.round(FALLBACK_PRICES.silverTraditional * (1 - SELLING_PRICE_DEDUCTION)),
+        goldSellingPerGram: parseFloat((FALLBACK_PRICES.goldTraditional * (1 - SELLING_PRICE_DEDUCTION)).toFixed(2)),
+        silverSellingPerGram: parseFloat((FALLBACK_PRICES.silverTraditional * (1 - SELLING_PRICE_DEDUCTION)).toFixed(2)),
       },
       source: FALLBACK_PRICES.source,
       lastUpdate: FALLBACK_PRICES.lastUpdate,
@@ -56,8 +56,8 @@ const getBAJUSPrices = async () => {
         silverPerGram: FALLBACK_PRICES.silverTraditional,
         goldPerVori: Math.round(FALLBACK_PRICES.goldTraditional * VORI_TO_GRAM),
         silverPerVori: Math.round(FALLBACK_PRICES.silverTraditional * VORI_TO_GRAM),
-        goldSellingPerGram: Math.round(FALLBACK_PRICES.goldTraditional * (1 - SELLING_PRICE_DEDUCTION)),
-        silverSellingPerGram: Math.round(FALLBACK_PRICES.silverTraditional * (1 - SELLING_PRICE_DEDUCTION)),
+        goldSellingPerGram: parseFloat((FALLBACK_PRICES.goldTraditional * (1 - SELLING_PRICE_DEDUCTION)).toFixed(2)),
+        silverSellingPerGram: parseFloat((FALLBACK_PRICES.silverTraditional * (1 - SELLING_PRICE_DEDUCTION)).toFixed(2)),
       },
       source: 'Fallback prices',
       lastUpdate: FALLBACK_PRICES.lastUpdate,
