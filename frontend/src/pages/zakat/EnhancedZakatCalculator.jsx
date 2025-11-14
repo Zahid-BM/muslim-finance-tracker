@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+import generateZakatCertificate from '../../utils/zakatCertificateGenerator';
+
 const EnhancedZakatCalculator = () => {
   const [prices, setPrices] = useState({
     goldSellingPerGram: 0,
@@ -137,6 +139,47 @@ const EnhancedZakatCalculator = () => {
     }
   };
   
+
+  const handleDownloadCertificate = async () => {
+    if (!result || !result.isObligatory === undefined) {
+      alert('প্রথমে যাকাত হিসাব করুন');
+      return;
+    }
+
+    try {
+      // Generate unique certificate ID
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2, 9).toUpperCase();
+      const certificateId = `MFT-ZK-${timestamp}-${random}`;
+
+      // Prepare data
+      const certificateData = {
+        certificateId,
+        date: new Date().toLocaleDateString('bn-BD', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        userName: 'ব্যবহারকারী', // TODO: Get from auth context if logged in
+        assets,
+        liabilities,
+        result,
+        nisabInfo: nisabDetails,
+        language: 'bn'
+      };
+
+      // Generate PDF
+      await generateZakatCertificate(certificateData);
+      
+      // Success message
+      alert('✅ সার্টিফিকেট ডাউনলোড সফল হয়েছে!');
+      
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      alert('❌ সার্টিফিকেট তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+    }
+  };
+
   const openMasail = (topic) => {
     setMasailModal({ show: true, topic });
   };
@@ -886,6 +929,23 @@ const EnhancedZakatCalculator = () => {
                 </p>
               </div>
             )}
+
+            {/* Download Certificate Button */}
+            <div className="mt-6 text-center">
+              <button
+                onClick={handleDownloadCertificate}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold text-lg rounded-xl hover:from-blue-700 hover:to-indigo-800 transform hover:scale-105 transition-all duration-200 shadow-xl hover:shadow-2xl"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                📄 সার্টিফিকেট ডাউনলোড করুন
+              </button>
+              <p className="text-sm text-gray-600 mt-3">
+                Download professional PDF certificate for your records
+              </p>
+            </div>
+
             
             {/* Contact */}
             <div className="mt-6 bg-white rounded-xl p-5 border-2 border-gray-300">
