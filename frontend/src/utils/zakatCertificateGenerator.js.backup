@@ -68,7 +68,7 @@ export default async function generateZakatCertificate(certificateData, language
       width: 90, margin: 1, color: { dark: '#000000', light: '#ffffff' }
     });
 
-    // Professional page creator - FIXED LAYOUT
+    // Professional page creator with PROPER CONTENT LIMITING (NO OVERFLOW!)
     const createPage = (content, pageNum, total) => {
       const container = document.createElement('div');
       container.style.cssText = `
@@ -79,8 +79,8 @@ export default async function generateZakatCertificate(certificateData, language
       `;
       
       container.innerHTML = `
-        <!-- HEADER: 110px FIXED -->
-        <div style="position: absolute; top: 0; left: 0; right: 0; height: 110px; background: linear-gradient(135deg, #16a34a, #15803d); padding: 20px 35px; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);">
+        <!-- HEADER: 110px with BIGGER LEFT LOGO -->
+        <div style="height: 110px; background: linear-gradient(135deg, #16a34a, #15803d); padding: 20px 35px; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);">
           <div style="display: flex; align-items: center; justify-content: flex-start; gap: 25px; height: 100%;">
             <img src="${LOGO_BASE64}" style="width: 90px; height: 90px; filter: brightness(0) invert(1);" />
             <div>
@@ -90,15 +90,15 @@ export default async function generateZakatCertificate(certificateData, language
           </div>
         </div>
         
-        <!-- CONTENT AREA: 923px (1123 - 110 header - 90 footer) -->
-        <div style="position: absolute; top: 110px; left: 0; right: 0; height: 923px; padding: 15px 35px 20px 35px; overflow: hidden; box-sizing: border-box;">
-          <div style="max-height: 888px; overflow: hidden;">
+        <!-- CONTENT AREA: 860px SAFE ZONE -->
+        <div style="height: 860px; padding: 13px 35px 25px 35px; overflow: hidden; box-sizing: border-box;">
+          <div style="max-height: 819px; overflow: hidden;">
             ${content}
           </div>
         </div>
         
-        <!-- FOOTER: 90px FIXED AT BOTTOM -->
-        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 90px; padding: 12px 35px 15px 35px; border-top: 2px solid #e5e7eb; background: white; box-sizing: border-box;">
+        <!-- FOOTER: 103px - ALWAYS AT BOTTOM -->
+        <div style="height: 103px; padding: 15px 35px 20px 35px; border-top: 2px solid #e5e7eb; background: white; box-sizing: border-box;">
           <div style="display: flex; justify-content: space-between; align-items: center; height: 100%;">
             <div style="display: flex; align-items: center; gap: 12px;">
               <img src="${appQRCode}" style="width: 50px; height: 50px; border: 2px solid #16a34a; border-radius: 6px; padding: 4px; background: white;" />
@@ -124,8 +124,8 @@ export default async function generateZakatCertificate(certificateData, language
 
     // ===== PAGE 1: CLEAN PROFESSIONAL RESULT (OPTIMIZED) =====
     pages.push(`
-      <!-- Certificate Info - Ultra Compact -->
-      <div style="background: #f9fafb; border-left: 3px solid #16a34a; padding: 7px; border-radius: 4px; margin-bottom: 6px;">
+      <!-- Certificate Info - Compact Design -->
+      <div style="background: #f9fafb; border-left: 4px solid #16a34a; padding: 10px; border-radius: 5px; margin-bottom: 9px;">
         <table style="width: 100%; font-size: 10px; line-height: 1.8;">
           <tr>
             <td style="width: 50%;"><strong style="color: #374151;">সনদ নম্বর:</strong></td>
@@ -144,9 +144,9 @@ export default async function generateZakatCertificate(certificateData, language
 
       <!-- RESULT BOX - Compact -->
       ${isZakatObligatory ? `
-        <div style="background: #f0fdf4; border: 2px solid #16a34a; border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 6px;">
-          <div style="font-size: 36px; margin-bottom: 8px; color: #16a34a;">✓</div>
-          <h1 style="margin: 0 0 6px 0; font-size: 20px; font-weight: 800; color: #15803d;">
+        <div style="background: #f0fdf4; border: 3px solid #16a34a; border-radius: 10px; padding: 18px; text-align: center; margin-bottom: 9px;">
+          <div style="font-size: 44px; margin-bottom: 10px; color: #16a34a;">✓</div>
+          <h1 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 800; color: #15803d;">
             মাশাআল্লাহ! আপনার উপর যাকাত ফরয
           </h1>
           <div style="font-size: 12px; font-weight: 600; color: #166534; margin-bottom: 10px;">
@@ -169,16 +169,16 @@ export default async function generateZakatCertificate(certificateData, language
         </div>
       `}
 
-      <!-- Calculation Summary -->
-      <div style="background: white; border: 2px solid #e5e7eb; border-radius: 5px; padding: 7px; margin-bottom: 7px;">
-        <h2 style="font-size: 11px; font-weight: 700; color: #1f2937; margin: 0 0 8px 0; padding-bottom: 6px; border-bottom: 2px solid #e5e7eb; text-align: center;">
+      <!-- Calculation Summary - Compact Table -->
+      <div style="background: white; border: 2px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-bottom: 10px;">
+        <h2 style="font-size: 12px; font-weight: 700; color: #1f2937; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb; text-align: center;">
           📊 হিসাবের সারসংক্ষেপ | CALCULATION SUMMARY
         </h2>
-        <table style="width: 100%; border-collapse: collapse; font-size: 9px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
           <thead>
             <tr style="background: #f3f4f6;">
-              <th style="padding: 6px; border: 1px solid #e5e7eb; text-align: left; font-weight: 700; color: #374151; font-size: 9px;">সম্পদের ধরন | Asset Type</th>
-              <th style="padding: 6px; border: 1px solid #e5e7eb; text-align: right; font-weight: 700; color: #374151; font-size: 9px;">পরিমাণ | Amount</th>
+              <th style="padding: 8px; border: 1px solid #e5e7eb; text-align: left; font-weight: 700; color: #374151;">সম্পদের ধরন | Asset Type</th>
+              <th style="padding: 8px; border: 1px solid #e5e7eb; text-align: right; font-weight: 700; color: #374151;">পরিমাণ | Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -204,10 +204,11 @@ export default async function generateZakatCertificate(certificateData, language
         </table>
       </div>
 
-      <div style="height: 6px;"></div>
+      <!-- SPACING -->
+      <div style="height: 12px;"></div>
 
-      <!-- Nisab Info -->
-      <div style="background: #fffbeb; border: 2px solid #fbbf24; border-radius: 5px; padding: 7px; text-align: center;">
+      <!-- Nisab Info - Compact -->
+      <div style="background: #fffbeb; border: 2px solid #fbbf24; border-radius: 6px; padding: 10px; text-align: center;">
         <h3 style="font-size: 12px; font-weight: 700; color: #92400e; margin: 0 0 10px 0;">
           📏 নিসাব সীমা | NISAB THRESHOLD
         </h3>
@@ -219,12 +220,13 @@ export default async function generateZakatCertificate(certificateData, language
         </div>
       </div>
 
-      <div style="height: 8px;"></div>
+      <!-- SPACING -->
+      <div style="height: 20px;"></div>
     `);
 
     // ===== PAGE 2: METHODOLOGY =====
     pages.push(`
-      <div style="background: #f9fafb; border-left: 3px solid #3b82f6; padding: 8px; border-radius: 5px; margin-bottom: 7px;">
+      <div style="background: #f9fafb; border-left: 4px solid #3b82f6; padding: 13px; border-radius: 6px; margin-bottom: 10px;">
         <h2 style="font-size: 18px; font-weight: 700; color: #1e40af; margin: 0 0 15px 0; text-align: center; padding-bottom: 10px; border-bottom: 2px solid #e5e7eb;">
           📐 হিসাব পদ্ধতি | CALCULATION METHODOLOGY
         </h2>
@@ -293,173 +295,179 @@ export default async function generateZakatCertificate(certificateData, language
         </div>
       </div>
 
-      <div style="height: 8px;"></div>
+      <!-- SPACING -->
+      <div style="height: 20px;"></div>
     `);
 
     // ===== PAGE 3: REFERENCES & VERIFICATION =====
     pages.push(`
-      <div style="background: #f0fdf4; border: 2px solid #16a34a; padding: 6px; border-radius: 6px; margin-bottom: 6px;">
-        <h2 style="font-size: 14px; font-weight: 700; color: #15803d; margin: 0 0 8px 0; text-align: center; padding-bottom: 6px; border-bottom: 2px solid #16a34a;">
+      <div style="background: #f0fdf4; border: 2px solid #16a34a; padding: 9px; border-radius: 8px; margin-bottom: 9px;">
+        <h2 style="font-size: 18px; font-weight: 700; color: #15803d; margin: 0 0 15px 0; text-align: center; padding-bottom: 10px; border-bottom: 2px solid #16a34a;">
           ☪️ ইসলামী রেফারেন্স | ISLAMIC REFERENCES
         </h2>
         
-        <div style="background: white; padding: 6px; border-radius: 4px; margin-bottom: 6px; border-left: 2px solid #16a34a;">
-          <div style="font-size: 9px; font-weight: 700; color: #166534; margin-bottom: 3px;">মাযহাব | Madhab:</div>
-          <div style="font-size: 8px; color: #374151; margin-bottom: 4px;">হানাফী (Hanafi)</div>
-          <div style="font-size: 7px; color: #6b7280; font-style: italic; line-height: 1.4;">
-            এই হিসাব হানাফী মাযহাবের (৫২.৫ তোলা রূপা) নিয়ম অনুসরণ করে তৈরি।
+        <div style="background: white; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid #16a34a;">
+          <div style="font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 5px;">মাযহাব | Madhab:</div>
+          <div style="font-size: 10px; color: #374151; margin-bottom: 8px;">হানাফী (Hanafi)</div>
+          <div style="font-size: 9px; color: #6b7280; font-style: italic; line-height: 1.6;">
+            এই হিসাব হানাফী মাযহাবের (৫২.৫ তোলা রূপা) নিয়ম অনুসরণ করে তৈরি।<br/>
+            Silver nisab (52.5 vori) - Recommended for general public
           </div>
         </div>
 
-        <div style="background: white; padding: 6px; border-radius: 4px; margin-bottom: 6px; border-left: 2px solid #16a34a;">
-          <div style="font-size: 9px; font-weight: 700; color: #166534; margin-bottom: 3px;">প্রাথমিক সূত্র:</div>
-          <div style="font-size: 7px; color: #6b7280; line-height: 1.5;">
-            দারুল উলুম দেওবন্দ • মুফতী তাকী উসমানী • আল-কাউসার
+        <div style="background: white; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid #16a34a;">
+          <div style="font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 5px;">প্রাথমিক সূত্র:</div>
+          <div style="font-size: 9px; color: #6b7280; line-height: 1.9;">
+            • দারুল উলুম দেওবন্দ<br/>
+            • মুফতী তাকী উসমানী<br/>
+            • আল-কাউসার, বাংলাদেশ
           </div>
         </div>
 
-        <div style="background: white; padding: 6px; border-radius: 4px; border-left: 2px solid #16a34a; margin-bottom: 6px;">
-          <div style="font-size: 9px; font-weight: 700; color: #166534; margin-bottom: 3px;">📖 কুরআন:</div>
-          <div style="font-size: 7px; color: #6b7280; line-height: 1.4;">
+        <div style="background: white; padding: 10px; border-radius: 6px; border-left: 3px solid #16a34a; margin-bottom: 8px;">
+          <div style="font-size: 10px; font-weight: 700; color: #166534; margin-bottom: 6px;">📖 পবিত্র কুরআন | Holy Quran:</div>
+          <div style="font-size: 9px; color: #6b7280; line-height: 1.8;">
             <strong style="color: #15803d;">"আর তোমরা যাকাত প্রদান কর"</strong><br/>
-            (সূরা বাকারা: ২:৪৩, ২:১১০, ২:২৭৭)
+            <span style="font-style: italic;">(সূরা বাকারা: ২:৪৩, ২:১১০, ২:২৭৭ | Surah Al-Baqarah)</span>
           </div>
         </div>
 
-        <div style="background: white; padding: 6px; border-radius: 4px; border-left: 2px solid #16a34a; margin-bottom: 6px;">
-          <div style="font-size: 9px; font-weight: 700; color: #166534; margin-bottom: 3px;">📚 হাদীস:</div>
-          <div style="font-size: 7px; color: #6b7280; line-height: 1.4;">
-            <strong style="color: #15803d;">"রূপার নিসাব ২০০ দিরহাম"</strong><br/>
-            (সহীহ বুখারী: ১৪৫৪ | মুসলিম: ৯৭৯)
+        <div style="background: white; padding: 10px; border-radius: 6px; border-left: 3px solid #16a34a; margin-bottom: 8px;">
+          <div style="font-size: 10px; font-weight: 700; color: #166534; margin-bottom: 6px;">📚 সহীহ হাদীস | Authentic Hadith:</div>
+          <div style="font-size: 9px; color: #6b7280; line-height: 1.8;">
+            <strong style="color: #15803d;">"রূপার নিসাব ২০০ দিরহাম (৬১২.৩৬ গ্রাম)"</strong><br/>
+            <span style="font-style: italic;">(সহীহ বুখারী: ১৪৫৪ | Sahih Bukhari: 1454)<br/>
+            (সহীহ মুসলিম: ৯৭৯ | Sahih Muslim: 979)</span>
           </div>
         </div>
 
-        <div style="background: white; padding: 6px; border-radius: 4px; border-left: 2px solid #16a34a;">
-          <div style="font-size: 9px; font-weight: 700; color: #166534; margin-bottom: 3px;">⚖️ হানাফী ফিকহ:</div>
-          <div style="font-size: 7px; color: #6b7280; line-height: 1.4;">
-            রদ্দুল মুহতার • আল-হিদায়া • ফাতহুল ক়দীর
+        <div style="background: white; padding: 10px; border-radius: 6px; border-left: 3px solid #16a34a;">
+          <div style="font-size: 10px; font-weight: 700; color: #166534; margin-bottom: 6px;">⚖️ হানাফী ফিকহ | Hanafi Fiqh:</div>
+          <div style="font-size: 9px; color: #6b7280; line-height: 1.8;">
+            <strong style="color: #15803d;">রূপা ভিত্তিক নিসাব (৫২.৫ তোলা = ৬১২.৩৬ গ্রাম)</strong><br/>
+            <span style="font-style: italic;">
+            • রদ্দুল মুহতার (Raddul Muhtar)<br/>
+            • আল-হিদায়া (Al-Hidayah)<br/>
+            • ফাতহুল ক়দীর (Fathul Qadir)
+            </span>
           </div>
         </div>
       </div>
 
-      <div style="height: 6px;"></div>
+      <!-- SPACING -->
+      <div style="height: 15px;"></div>
 
-      <!-- QR + Important Note - COMPACT -->
-      <div style="text-align: center; margin: 10px auto; padding: 10px; background: white; border: 2px solid #e5e7eb; border-radius: 6px; max-width: 300px;">
-        <div style="font-size: 11px; font-weight: 700; color: #1f2937; margin-bottom: 8px;">🔍 যাচাই করুন | Verify</div>
+      <!-- QR CENTERED -->
+      <div style="text-align: center; margin: 25px auto; padding: 20px; background: white; border: 2px solid #e5e7eb; border-radius: 8px; max-width: 350px;">
+        <div style="font-size: 12px; font-weight: 700; color: #1f2937; margin-bottom: 10px;">🔍 যাচাই করুন | Verify</div>
         <div style="display: inline-block;">
-          <img src="${certQRCode}" style="width: 100px; height: 100px; border: 2px solid #e5e7eb; border-radius: 5px; padding: 5px; background: white;" />
+          <img src="${certQRCode}" style="width: 140px; height: 140px; border: 2px solid #e5e7eb; border-radius: 8px; padding: 8px; background: white;" />
         </div>
-        <div style="font-size: 8px; color: #6b7280; margin-top: 8px;">QR কোড স্ক্যান করে যাচাই করুন</div>
-        <div style="font-size: 7px; color: #9ca3af; margin-top: 4px; font-family: monospace; word-break: break-all; padding: 0 10px;">
+        <div style="font-size: 10px; color: #6b7280; margin-top: 10px;">QR কোড স্ক্যান করে যাচাই করুন</div>
+        <div style="font-size: 9px; color: #9ca3af; margin-top: 6px; font-family: monospace; word-break: break-all; padding: 0 15px;">
           ${certificateId}
         </div>
       </div>
 
-      <!-- Important Note - COMPACT -->
-      <div style="background: #fffbeb; border: 2px solid #fbbf24; padding: 6px; border-radius: 5px; margin-bottom: 8px;">
-        <div style="font-size: 10px; font-weight: 700; color: #92400e; margin-bottom: 5px; text-align: center;">⚠️ গুরুত্বপূর্ণ নোট | IMPORTANT NOTE</div>
-        <div style="font-size: 7px; color: #78350f; line-height: 1.5; text-align: center;">
-          এই হিসাব <strong>${localDate}</strong> তারিখে BAJUS রূপার মূল্যের উপর ভিত্তি করে তৈরি।<br/>
-          ⚠️ মূল্য পরিবর্তনশীল - যাকাত দেওয়ার আগে সর্বশেষ মূল্য যাচাই করুন।
+      <!-- Important Note -->
+      <div style="background: #fffbeb; border: 2px solid #fbbf24; padding: 10px; border-radius: 8px; margin-bottom: 25px;">
+        <div style="font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 8px;">⚠️ গুরুত্বপূর্ণ নোট | IMPORTANT NOTE</div>
+        <div style="font-size: 9px; color: #78350f; line-height: 1.7; margin-bottom: 10px;">
+          এই হিসাব <strong>${localDate}</strong> তারিখে BAJUS এর রূপার বিক্রয় মূল্যের উপর ভিত্তি করে তৈরি।<br/>
+          Calculation Date: ${localDate}
+        </div>
+        <div style="background: white; padding: 8px; border-radius: 5px; border-left: 3px solid #fbbf24; font-size: 9px; color: #78350f;">
+          ⚠️ মূল্য পরিবর্তনশীল - যাকাত দেওয়ার আগে সর্বশেষ মূল্য যাচাই করুন।<br/>
+          <span style="font-size: 8px;">Silver prices fluctuate daily. Please recheck current prices before paying.</span>
         </div>
       </div>
 
+      <!-- SPACING -->
+      <div style="height: 15px;"></div>
 
-      <div style="height: 8px;"></div>
+      <!-- Price + Final Confirmation -->
+      <div style="margin-bottom: 40px;">
+        <div style="background: white; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+          <div style="font-size: 10px; font-weight: 700; color: #1f2937; margin-bottom: 8px;">💰 মূল্য যাচাই | Price Verification:</div>
+          <div style="font-size: 9px; color: #6b7280; line-height: 1.8;">
+            ${countrySource.flag} ${countrySource.name}: ${countrySource.org}<br/>
+            <strong>Website:</strong> ${countrySource.url}
+          </div>
+        </div>
+
+        <div style="background: white; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px;">
+          <div style="font-size: 10px; font-weight: 700; color: #1f2937; margin-bottom: 8px;">💬 চূড়ান্ত নিশ্চিতকরণ | Final Confirmation:</div>
+          <div style="font-size: 9px; color: #6b7280; line-height: 1.8;">
+            - স্থানীয় আলেম বা মুফতীর সাথে পরামর্শ করুন<br/>
+            - Consult with local Islamic scholars<br/>
+            <div style="margin-top: 10px; padding: 8px; background: #f0fdf4; border-radius: 5px; font-weight: 600; color: #166534; border-left: 3px solid #16a34a;">
+              📧 <strong>Muslim Finance Tracker Support:</strong><br/>
+              support@muslimfinancetracker.com
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPACING BEFORE FOOTER -->
+      <div style="height: 25px;"></div>
     `);
 
-    // ===== PAGE 4: MASAIL (COMPACT VERSION) =====
+    // ===== PAGE 4: MASAIL =====
     pages.push(`
-      <div style="background: #fffbeb; border: 2px solid #fbbf24; padding: 6px; border-radius: 6px; margin-bottom: 6px;">
-        <h2 style="font-size: 14px; font-weight: 700; color: #92400e; margin: 0; text-align: center;">
-          📚 যাকাতের মাসআলা | ZAKAT MASAIL
+      <div style="background: #fffbeb; border: 2px solid #fbbf24; padding: 9px; border-radius: 8px; margin-bottom: 9px;">
+        <h2 style="font-size: 18px; font-weight: 700; color: #92400e; margin: 0; text-align: center;">
+          📚 যাকাতের বিস্তারিত মাসআলা | COMPLETE ZAKAT MASAIL
         </h2>
       </div>
 
-      <div style="background: white; border: 1px solid #e5e7eb; padding: 6px; border-radius: 4px; margin-bottom: 6px;">
-        <div style="font-size: 10px; font-weight: 700; color: #1f2937; margin-bottom: 4px; padding-bottom: 3px; border-bottom: 1px solid #e5e7eb;">
+      <div style="background: white; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; margin-bottom: 9px;">
+        <div style="font-size: 12px; font-weight: 700; color: #1f2937; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;">
           ১। যাকাত ফরয হওয়ার শর্তসমূহ:
         </div>
-        <div style="font-size: 8px; color: #4b5563; line-height: 1.6;">
-          <strong>মালিকানা:</strong> পূর্ণ মালিকানা।
-          <strong>নিসাব:</strong> ৫২.৫ তোলা রূপা বা সমতুল্য।
-          <strong>হাওল:</strong> এক চান্দ্র বছর।
-          <strong>অতিরিক্ত:</strong> মৌলিক প্রয়োজনের পর।
+        <div style="font-size: 10px; color: #4b5563; line-height: 1.9;">
+          <strong>মালিকানা:</strong> সম্পদের পূর্ণ মালিকানা থাকতে হবে।<br/>
+          <strong>নিসাব:</strong> নিসাব পরিমাণ সম্পদ (৫২.৫ তোলা রূপা বা সমতুল্য)।<br/>
+          <strong>হাওল:</strong> এক পূর্ণ চান্দ্র বছর অতিবাহিত হতে হবে।<br/>
+          <strong>মৌলিক প্রয়োজনের অতিরিক্ত:</strong> মৌলিক প্রয়োজন পূরণের পর অতিরিক্ত সম্পদ।
         </div>
       </div>
 
-      <div style="background: white; border: 1px solid #e5e7eb; padding: 6px; border-radius: 4px; margin-bottom: 6px;">
-        <div style="font-size: 10px; font-weight: 700; color: #1f2937; margin-bottom: 4px; padding-bottom: 3px; border-bottom: 1px solid #e5e7eb;">
+      <div style="background: white; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; margin-bottom: 9px;">
+        <div style="font-size: 12px; font-weight: 700; color: #1f2937; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;">
           ২। যাকাতযোগ্য সম্পদ:
         </div>
-        <div style="font-size: 8px; color: #4b5563; line-height: 1.6;">
-          <strong>সোনা-রূপা:</strong> বিক্রয় মূল্য।
-          <strong>নগদ:</strong> হাতে বা ব্যাংকে।
-          <strong>ব্যবসা:</strong> বর্তমান বিক্রয় মূল্য।
-          <strong>বিনিয়োগ:</strong> শেয়ার, বন্ড।
-          <strong>ঋণ:</strong> যা ফেরত পাওয়ার সম্ভাবনা আছে।
+        <div style="font-size: 10px; color: #4b5563; line-height: 1.9;">
+          <strong>সোনা ও রূপা:</strong> বিক্রয় মূল্যে হিসাব (ক্রয় মূল্য থেকে সাধারণত ২০% কম)।<br/>
+          <strong>নগদ অর্থ:</strong> হাতে বা ব্যাংকে থাকা সকল টাকা।<br/>
+          <strong>ব্যবসায়িক পণ্য:</strong> বর্তমান বিক্রয় মূল্যে হিসাব।<br/>
+          <strong>বিনিয়োগ:</strong> শেয়ার, বন্ড ইত্যাদির বর্তমান মূল্য।<br/>
+          <strong>প্রদত্ত ঋণ:</strong> যা ফেরত পাওয়ার সম্ভাবনা আছে।
         </div>
       </div>
 
-      <div style="background: white; border: 1px solid #e5e7eb; padding: 6px; border-radius: 4px; margin-bottom: 6px;">
-        <div style="font-size: 10px; font-weight: 700; color: #1f2937; margin-bottom: 4px; padding-bottom: 3px; border-bottom: 1px solid #e5e7eb;">
+      <div style="background: white; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; margin-bottom: 9px;">
+        <div style="font-size: 12px; font-weight: 700; color: #1f2937; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;">
           ৩। যাকাত পাওয়ার যোগ্য (৮ শ্রেণী):
         </div>
-        <div style="font-size: 8px; color: #4b5563; line-height: 1.6;">
-          ১. <strong>ফকীর</strong> ২. <strong>মিসকীন</strong> ৩. <strong>যাকাত কর্মচারী</strong> ৪. <strong>নও-মুসলিম</strong><br/>
-          ৫. <strong>দাসমুক্তি</strong> ৬. <strong>ঋণগ্রস্ত</strong> ৭. <strong>আল্লাহর পথে</strong> ৮. <strong>মুসাফির</strong>
+        <div style="font-size: 10px; color: #4b5563; line-height: 1.9;">
+          ১. <strong>ফকীর:</strong> যার কিছুই নেই<br/>
+          ২. <strong>মিসকীন:</strong> যার অল্প আছে কিন্তু প্রয়োজন মেটে না<br/>
+          ৩. <strong>যাকাত কর্মচারী</strong><br/>
+          ৪. <strong>নও-মুসলিম</strong><br/>
+          ৫. <strong>দাসমুক্তি</strong><br/>
+          ৬. <strong>ঋণগ্রস্ত</strong><br/>
+          ৭. <strong>আল্লাহর পথে</strong><br/>
+          ৮. <strong>মুসাফির</strong>
         </div>
       </div>
 
-      <div style="background: #f0fdf4; border: 1px solid #16a34a; padding: 6px; border-radius: 4px; margin-bottom: 8px;">
-        <div style="font-size: 10px; font-weight: 700; color: #166534; margin-bottom: 4px;">৪। বিশেষ নোট:</div>
-        <div style="font-size: 8px; color: #166534; line-height: 1.6;">
-          • স্বামী/স্ত্রী, পিতা-মাতা, সন্তানকে যাকাত দেওয়া যায় না।
-          • ব্যক্তিগত ব্যবহারের জিনিস যাকাতযোগ্য নয়।
-          • <strong>বিক্রয় মূল্য</strong> দিয়ে হিসাব করতে হবে।
-        </div>
-      </div>
-
-      <!-- Price Verification - MOVED FROM PAGE 3 -->
-      <div style="background: white; border: 2px solid #e5e7eb; padding: 8px; border-radius: 5px; margin-bottom: 8px;">
-        <div style="font-size: 10px; font-weight: 700; color: #1f2937; margin-bottom: 5px; text-align: center;">💰 মূল্য যাচাই | Price Verification</div>
-        <div style="font-size: 8px; color: #6b7280; line-height: 1.6; text-align: center;">
-          ${countrySource.flag} ${countrySource.name}: ${countrySource.org}<br/>
-          <strong>Website:</strong> ${countrySource.url}
-        </div>
-      </div>
-
-      <!-- Disclaimer Box -->
-      <div style="background: #fffbeb; border: 2px solid #f59e0b; padding: 10px; border-radius: 6px; margin-bottom: 12px;">
-        <div style="font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 8px; text-align: center;">
-          ⚠️ গুরুত্বপূর্ণ | IMPORTANT DISCLAIMER
-        </div>
-        <div style="font-size: 9px; color: #78350f; line-height: 1.8;">
-          যাকাত একটি অর্থনৈতিক ফরয ইবাদত। শুধুমাত্র এই রিপোর্টের উপর নির্ভর না করে আপনার এলাকার স্থানীয় আলেম বা মুফতীদের সাথে বিস্তারিত পরামর্শ করুন এবং প্রয়োজনীয় মাসআলা সঠিকভাবে জেনে নিন।<br/><br/>
-          <span style="font-style: italic;">Zakat is mandatory financial worship. Consult local Islamic scholars before paying your Zakat.</span>
-        </div>
-      </div>
-
-      <!-- Contact Box -->
-      <div style="background: white; border: 2px solid #16a34a; padding: 10px; border-radius: 6px; margin-bottom: 12px;">
-        <div style="font-size: 11px; font-weight: 700; color: #15803d; margin-bottom: 6px; text-align: center;">
-          📧 যোগাযোগ | Contact
-        </div>
-        <div style="font-size: 9px; color: #166534; text-align: center; line-height: 1.8;">
-          <strong>Muslim Finance Tracker Support</strong><br/>
-          support@muslimfinancetracker.com
-        </div>
-      </div>
-
-      <!-- Dua Box -->
-      <div style="background: #f0fdf4; border: 2px solid #16a34a; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
-        <div style="font-size: 11px; font-weight: 700; color: #15803d; margin-bottom: 8px; text-align: center;">
-          🤲 দু'আ | Dua
-        </div>
-        <div style="font-size: 9px; color: #166534; line-height: 1.8; text-align: center;">
-          আল্লাহ তা'আলা আমাদের সবাইকে সঠিকভাবে মাসআলা জেনে-বুঝে তাকওয়া নিয়ে যাকাত আদায় করার তৌফিক দান করুন। আমীন।<br/><br/>
-          <span style="font-style: italic;">May Allah grant us all the ability to pay Zakat correctly with Taqwa. Ameen.</span>
+      <div style="background: #f0fdf4; border: 1px solid #16a34a; padding: 10px; border-radius: 6px; margin-bottom: 40px;">
+        <div style="font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 10px;">৪। বিশেষ নোট:</div>
+        <div style="font-size: 10px; color: #166534; line-height: 1.9;">
+          • নিজের স্বামী/স্ত্রী, পিতা-মাতা, সন্তানকে যাকাত দেওয়া যায় না।<br/>
+          • ব্যক্তিগত ব্যবহারের জিনিস (ঘর, গাড়ি) যাকাতযোগ্য নয়।<br/>
+          • চান্দ্র বছর হিসাবে এক বছর পূর্ণ হতে হবে।<br/>
+          • <strong>বিক্রয় মূল্য</strong> দিয়ে হিসাব করতে হবে, ক্রয় মূল্য নয়।
         </div>
       </div>
     `);
