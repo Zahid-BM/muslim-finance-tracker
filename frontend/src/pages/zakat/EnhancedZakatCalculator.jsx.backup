@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
 
 import generateZakatCertificate from '../../utils/zakatCertificateGenerator';
 
@@ -33,10 +32,6 @@ const EnhancedZakatCalculator = () => {
   const [loading, setLoading] = useState(false);
   const [masailModal, setMasailModal] = useState({ show: false, topic: '' });
   const [userCountry, setUserCountry] = useState('BD');
-  
-  // Step 41.7: New states for enhanced UX
-  const [resultModal, setResultModal] = useState(false);
-  const [downloadLoading, setDownloadLoading] = useState(false);
 
   useEffect(() => {
     fetchPrices();
@@ -111,19 +106,6 @@ const EnhancedZakatCalculator = () => {
 
   
   const handleCalculate = async () => {
-    // Show loading toast
-    const loadingToast = toast.loading('⏳ হিসাব করা হচ্ছে...', {
-      position: 'top-center',
-      style: {
-        background: '#3b82f6',
-        color: 'white',
-        fontSize: '16px',
-        fontWeight: 'bold',
-        padding: '16px 24px',
-        borderRadius: '10px',
-      },
-    });
-
     setLoading(true);
     
     try {
@@ -147,41 +129,11 @@ const EnhancedZakatCalculator = () => {
       
       if (response.data.success) {
         setResult(response.data.result);
-        setResultModal(true); // Open modal
-        
-        // Dismiss loading and show success
-        toast.dismiss(loadingToast);
-        toast.success('✅ আলহামদুলিল্লাহ! হিসাব সফল হয়েছে!', {
-          duration: 3000,
-          position: 'top-center',
-          style: {
-            background: '#16a34a',
-            color: 'white',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            padding: '16px 24px',
-            borderRadius: '10px',
-          },
-          icon: '✅',
-        });
       }
       
     } catch (error) {
       console.error('Calculation error:', error);
-      
-      // Dismiss loading and show error
-      toast.dismiss(loadingToast);
-      toast.error('❌ হিসাব করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।', {
-        duration: 4000,
-        position: 'top-center',
-        style: {
-          background: '#dc2626',
-          color: 'white',
-          fontSize: '16px',
-          padding: '16px 24px',
-          borderRadius: '10px',
-        },
-      });
+      alert('হিসাব করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
     } finally {
       setLoading(false);
     }
@@ -189,36 +141,10 @@ const EnhancedZakatCalculator = () => {
   
 
   const handleDownloadCertificate = async () => {
-    if (!result || result.isObligatory === undefined) {
-      toast.error('⚠️ প্রথমে যাকাত হিসাব করুন', {
-        duration: 3000,
-        position: 'top-center',
-        style: {
-          background: '#f59e0b',
-          color: 'white',
-          fontSize: '16px',
-          fontWeight: 'bold',
-          padding: '16px 24px',
-          borderRadius: '10px',
-        },
-      });
+    if (!result || !result.isObligatory === undefined) {
+      alert('প্রথমে যাকাত হিসাব করুন');
       return;
     }
-
-    // Show loading state
-    setDownloadLoading(true);
-    const loadingToast = toast.loading('📄 আপনার সার্টিফিকেট তৈরি হচ্ছে... দয়া করে অপেক্ষা করুন', {
-      position: 'top-center',
-      style: {
-        background: '#3b82f6',
-        color: 'white',
-        fontSize: '17px',
-        fontWeight: 'bold',
-        padding: '20px 28px',
-        borderRadius: '12px',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-      },
-    });
 
     try {
       // Generate unique certificate ID
@@ -245,50 +171,14 @@ const EnhancedZakatCalculator = () => {
       // Generate PDF
       await generateZakatCertificate(certificateData);
       
-      // Dismiss loading and show success
-      toast.dismiss(loadingToast);
-      toast.success('✅ মাশাআল্লাহ! আপনার যাকাত সার্টিফিকেট সফলভাবে ডাউনলোড হয়েছে!', {
-        duration: 5000,
-        position: 'top-center',
-        style: {
-          background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-          color: 'white',
-          fontSize: '17px',
-          fontWeight: 'bold',
-          padding: '20px 28px',
-          borderRadius: '12px',
-          boxShadow: '0 10px 25px rgba(22, 163, 74, 0.3)',
-        },
-        icon: '📥',
-        iconTheme: {
-          primary: '#ffffff',
-          secondary: '#16a34a',
-        },
-      });
+      // Success message
+      alert('✅ সার্টিফিকেট ডাউনলোড সফল হয়েছে!');
       
     } catch (error) {
       console.error('PDF generation error:', error);
-      
-      // Dismiss loading and show error
-      toast.dismiss(loadingToast);
-      toast.error('❌ দুঃখিত! সার্টিফিকেট তৈরি করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।', {
-        duration: 5000,
-        position: 'top-center',
-        style: {
-          background: '#dc2626',
-          color: 'white',
-          fontSize: '16px',
-          fontWeight: 'bold',
-          padding: '18px 26px',
-          borderRadius: '12px',
-          boxShadow: '0 10px 25px rgba(220, 38, 38, 0.3)',
-        },
-      });
-    } finally {
-      setDownloadLoading(false);
+      alert('❌ সার্টিফিকেট তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
     }
   };
-
 
   const openMasail = (topic) => {
     setMasailModal({ show: true, topic });
@@ -571,9 +461,6 @@ const EnhancedZakatCalculator = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-8">
-      {/* Toast Notifications */}
-      <Toaster />
-      
       <div className="max-w-5xl mx-auto px-4">
         
         {/* Header */}
@@ -990,139 +877,87 @@ const EnhancedZakatCalculator = () => {
         </button>
         
         {/* Result */}
-        {/* Result Modal */}
-        {resultModal && result && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 backdrop-blur-sm animate-fadeIn">
-            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp">
+        {result && (
+          <div className="mt-8 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-2xl p-8 border-4 border-green-500">
+            <h2 className="text-3xl font-black mb-6 text-gray-800 flex items-center gap-3">
+              <span>📊</span>
+              <span>ফলাফল</span>
+            </h2>
+            
+            <div className="space-y-4 mb-6">
+              <div className="flex justify-between items-center py-4 border-b-2 border-gray-300">
+                <span className="text-lg font-semibold text-gray-700">মোট সম্পদ:</span>
+                <span className="text-2xl font-bold">৳ {formatCurrency(result.totalAssets)}</span>
+              </div>
               
-              {/* Modal Header */}
-              <div className="sticky top-0 bg-gradient-to-r from-green-600 to-emerald-700 text-white p-6 flex justify-between items-center rounded-t-2xl z-10 shadow-lg">
-                <h2 className="text-3xl font-black flex items-center gap-3">
-                  <span>📊</span>
-                  <span>যাকাত হিসাবের ফলাফল</span>
-                </h2>
-                <button 
-                  onClick={() => setResultModal(false)}
-                  className="text-white hover:bg-white/20 w-12 h-12 rounded-full transition-all duration-200 text-3xl font-bold flex items-center justify-center"
-                  title="বন্ধ করুন"
-                >
-                  ×
-                </button>
+              <div className="flex justify-between items-center py-4 border-b-2 border-gray-300">
+                <span className="text-lg font-semibold text-gray-700">মোট দায় (বাদযোগ্য):</span>
+                <span className="text-2xl font-bold text-red-600">৳ {formatCurrency(result.deductibleLiabilities)}</span>
               </div>
-
-              {/* Modal Content */}
-              <div className="p-6 md:p-8">
-                
-                {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border-2 border-blue-300 shadow">
-                    <p className="text-sm font-semibold text-blue-700 mb-1">মোট সম্পদ</p>
-                    <p className="text-3xl font-black text-blue-900">৳ {formatCurrency(result.totalAssets)}</p>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-5 border-2 border-red-300 shadow">
-                    <p className="text-sm font-semibold text-red-700 mb-1">মোট দায় (বাদযোগ্য)</p>
-                    <p className="text-3xl font-black text-red-900">৳ {formatCurrency(result.deductibleLiabilities)}</p>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-5 border-2 border-purple-300 shadow">
-                    <p className="text-sm font-semibold text-purple-700 mb-1">যাকাতযোগ্য সম্পদ</p>
-                    <p className="text-3xl font-black text-purple-900">৳ {formatCurrency(result.zakatableAmount)}</p>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-5 border-2 border-amber-300 shadow">
-                    <p className="text-sm font-semibold text-amber-700 mb-1">নিসাব (রুপা)</p>
-                    <p className="text-3xl font-black text-amber-900">৳ {formatCurrency(result.nisabThreshold)}</p>
-                  </div>
-                </div>
-
-                {/* Zakat Result */}
-                {result.isObligatory ? (
-                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-4 border-green-600 rounded-2xl p-8 shadow-lg mb-6">
-                    <p className="text-green-900 font-black text-2xl md:text-3xl mb-4 flex items-center gap-2">
-                      <span>✅</span>
-                      <span>মাশাআল্লাহ! আপনার উপর যাকাত ফরজ</span>
-                    </p>
-                    <div className="text-center bg-white/50 rounded-xl p-6 backdrop-blur">
-                      <p className="text-sm font-semibold text-gray-700 mb-2">আপনার যাকাতের পরিমাণ</p>
-                      <p className="text-5xl md:text-7xl font-black text-green-700 mb-3">
-                        ৳ {formatCurrency(result.zakatDue)}
-                      </p>
-                      <p className="text-lg text-gray-800 font-bold">
-                        (যাকাতযোগ্য সম্পদের ২.৫%)
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-gradient-to-r from-blue-100 to-sky-100 border-4 border-blue-500 rounded-2xl p-6 mb-6 shadow-lg">
-                    <p className="text-blue-900 font-bold text-xl md:text-2xl flex items-center gap-2">
-                      <span>ℹ️</span>
-                      <span>আপনার উপর যাকাত ফরজ নয়</span>
-                    </p>
-                    <p className="text-gray-700 mt-2 text-lg">
-                      আপনার সম্পদ নিসাব পরিমাণে পৌঁছায়নি।
-                    </p>
-                  </div>
-                )}
-
-                {/* Download Certificate Button */}
-                <div className="text-center mb-6">
-                  <button
-                    onClick={handleDownloadCertificate}
-                    disabled={downloadLoading}
-                    className={`inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold text-lg rounded-xl shadow-xl transform transition-all duration-200 ${
-                      downloadLoading 
-                        ? 'opacity-75 cursor-not-allowed' 
-                        : 'hover:from-blue-700 hover:to-indigo-800 hover:scale-105 hover:shadow-2xl'
-                    }`}
-                  >
-                    {downloadLoading ? (
-                      <>
-                        <svg className="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>তৈরি হচ্ছে...</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span>📄 সার্টিফিকেট ডাউনলোড করুন</span>
-                      </>
-                    )}
-                  </button>
-                  <p className="text-sm text-gray-600 mt-3">
-                    Professional PDF certificate for your records
-                  </p>
-                </div>
-
-                {/* Contact Information */}
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-5 border-2 border-gray-300">
-                  <p className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    <span>📞</span>
-                    <span>আরও জানতে যোগাযোগ করুন:</span>
-                  </p>
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <p>• আপনার এলাকার আলেমদের সাথে পরামর্শ করুন</p>
-                    <p>• Muslim Finance Tracker Support</p>
-                    <p className="text-blue-600 font-semibold">support@muslimfinancetracker.com</p>
-                  </div>
-                </div>
-
+              
+              <div className="flex justify-between items-center py-4 border-b-2 border-gray-300">
+                <span className="text-lg font-semibold text-gray-700">যাকাতযোগ্য সম্পদ:</span>
+                <span className="text-2xl font-bold text-blue-600">৳ {formatCurrency(result.zakatableAmount)}</span>
               </div>
-
-              {/* Modal Footer */}
-              <div className="sticky bottom-0 bg-gray-50 p-4 rounded-b-2xl border-t-2 border-gray-200">
-                <button 
-                  onClick={() => setResultModal(false)}
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  বন্ধ করুন
-                </button>
+              
+              <div className="flex justify-between items-center py-4 border-b-2 border-gray-300">
+                <span className="text-lg font-semibold text-gray-700">নিসাব (রুপা):</span>
+                <span className="text-2xl font-bold">৳ {formatCurrency(result.nisabThreshold)}</span>
               </div>
+            </div>
+            
+            {result.isObligatory ? (
+              <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-4 border-green-600 rounded-2xl p-8 shadow-lg">
+                <p className="text-green-900 font-black text-2xl mb-4 flex items-center gap-2">
+                  <span>✅</span>
+                  <span>মাশাআল্লাহ! আপনার উপর যাকাত ফরজ</span>
+                </p>
+                <p className="text-6xl md:text-7xl font-black text-green-700 mb-3">
+                  ৳ {formatCurrency(result.zakatDue)}
+                </p>
+                <p className="text-lg text-gray-800 font-bold">
+                  (যাকাতযোগ্য সম্পদের ২.৫%)
+                </p>
+              </div>
+            ) : (
+              <div className="bg-blue-50 border-4 border-blue-500 rounded-2xl p-6">
+                <p className="text-blue-900 font-bold text-xl">
+                  ℹ️ আপনার উপর যাকাত ফরজ নয়
+                </p>
+                <p className="text-gray-700 mt-2">
+                  নিসাব পরিমাণ সম্পদ নেই
+                </p>
+              </div>
+            )}
 
+            {/* Download Certificate Button */}
+            <div className="mt-6 text-center">
+              <button
+                onClick={handleDownloadCertificate}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold text-lg rounded-xl hover:from-blue-700 hover:to-indigo-800 transform hover:scale-105 transition-all duration-200 shadow-xl hover:shadow-2xl"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                📄 সার্টিফিকেট ডাউনলোড করুন
+              </button>
+              <p className="text-sm text-gray-600 mt-3">
+                Download professional PDF certificate for your records
+              </p>
+            </div>
+
+            
+            {/* Contact */}
+            <div className="mt-6 bg-white rounded-xl p-5 border-2 border-gray-300">
+              <p className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <span>📞</span>
+                <span>আরও জানতে যোগাযোগ করুন:</span>
+              </p>
+              <div className="space-y-2 text-sm text-gray-700">
+                <p>• আপনার এলাকার আলেমদের সাথে পরামর্শ করুন</p>
+                <p>• Muslim Finance Tracker Support</p>
+                <p className="text-blue-600 font-semibold">support@muslimfinancetracker.com</p>
+              </div>
             </div>
           </div>
         )}
