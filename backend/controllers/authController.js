@@ -161,3 +161,48 @@ exports.getProfile = async (req, res) => {
     });
   }
 };
+
+
+// Update User Profile (Mobile Number)
+exports.updateProfile = async (req, res) => {
+  try {
+    const { firebaseUid, mobile, name } = req.body;
+
+    if (!firebaseUid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Firebase UID is required'
+      });
+    }
+
+    // Find user
+    const user = await User.findOne({ firebaseUid });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Update fields
+    if (mobile) user.mobile = mobile;
+    if (name) user.name = name;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      user
+    });
+
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update profile',
+      error: error.message
+    });
+  }
+};

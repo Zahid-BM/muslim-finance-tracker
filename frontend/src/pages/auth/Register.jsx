@@ -64,10 +64,29 @@ const Register = () => {
     setLoading(true);
     
     try {
-      await loginWithGoogle();
+      const user = await loginWithGoogle();
       
-      // Success - Dashboard এ redirect করুন
-      navigate('/dashboard', { replace: true });
+      // Check if user has mobile number
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/api/auth/profile/${user.uid}`);
+      const data = await response.json();
+      
+      if (data.success && data.user) {
+        // Check if mobile exists
+        if (data.user.mobile && data.user.mobile.length > 0) {
+          // Has mobile - go to dashboard
+          navigate('/dashboard', { replace: true });
+        } else {
+          // No mobile - complete profile first
+          navigate('/complete-profile', { 
+            replace: true,
+            state: { from: '/dashboard' }
+          });
+        }
+      } else {
+        // Fallback - go to profile completion
+        navigate('/complete-profile', { replace: true });
+      }
       
     } catch (error) {
       // Error already handled in AuthContext

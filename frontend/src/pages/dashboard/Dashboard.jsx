@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { MdLogout, MdAccountCircle } from 'react-icons/md';
+import { useNavigate, Link } from 'react-router-dom';
+import { MdLogout, MdAccountCircle, MdClose, MdPhone } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import AddIncome from '../../components/transactions/AddIncome';
@@ -29,6 +29,8 @@ const Dashboard = () => {
   });
   
   const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
+  const [showMobileBanner, setShowMobileBanner] = useState(false);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -56,6 +58,24 @@ const Dashboard = () => {
     }
   };
 
+  const fetchUserProfile = async () => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/api/auth/profile/${currentUser.uid}`);
+      const data = await response.json();
+      
+      if (data.success && data.user) {
+        setUserProfile(data.user);
+        // Show banner if no mobile
+        if (!data.user.mobile || data.user.mobile.length === 0) {
+          setShowMobileBanner(true);
+        }
+      }
+    } catch (error) {
+      console.error('Fetch user profile error:', error);
+    }
+  };
+
   const fetchLoanStats = async () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL;
@@ -71,6 +91,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (currentUser) {
+      fetchUserProfile();
       fetchStats();
       fetchLoanStats();
     }
@@ -126,6 +147,42 @@ const Dashboard = () => {
           </div>
         </div>
       </nav>
+
+      {/* Mobile Number Reminder Banner - Only for users without mobile */}
+      {showMobileBanner && (
+        <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-1">
+                <MdPhone className="w-6 h-6 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="font-semibold text-sm sm:text-base">
+                    মোবাইল নম্বর যোগ করুন Premium Features এর জন্য!
+                  </p>
+                  <p className="text-xs sm:text-sm opacity-90">
+                    PDF সার্টিফিকেট ডাউনলোড, Advanced Analytics এবং আরও অনেক কিছু পেতে
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/complete-profile"
+                  className="bg-white text-orange-600 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold hover:bg-gray-100 transition-all text-xs sm:text-sm whitespace-nowrap"
+                >
+                  যোগ করুন
+                </Link>
+                <button
+                  onClick={() => setShowMobileBanner(false)}
+                  className="p-1.5 hover:bg-white/20 rounded-lg transition-all"
+                  aria-label="Close"
+                >
+                  <MdClose className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Dashboard Title Banner */}
       <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-4 shadow-md">

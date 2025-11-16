@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Login from './pages/auth/Login';
 import RegistrationSuccess from './pages/auth/RegistrationSuccess';
 import Register from './pages/auth/Register';
+import ProfileCompletion from './pages/auth/ProfileCompletion';
 import Dashboard from './pages/dashboard/Dashboard';
 import Loans from './pages/loans/Loans';
 import EnhancedZakatCalculator from './pages/zakat/EnhancedZakatCalculator';
@@ -48,6 +49,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/registration-success" element={<RegistrationSuccess />} />
+          <Route path="/complete-profile" element={<ProfileCompletion />} />
           <Route path="/zakat" element={<EnhancedZakatCalculator />} />
 
           {/* Protected Routes */}

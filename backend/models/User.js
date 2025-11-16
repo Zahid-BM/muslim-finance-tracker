@@ -44,6 +44,41 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'BDT'
   },
+  mobile: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  isPhoneVerified: {
+    type: Boolean,
+    default: false
+  },
+  subscriptionTier: {
+    type: String,
+    enum: ['free', 'premium'],
+    default: 'free'
+  },
+  subscriptionType: {
+    type: String,
+    enum: ['monthly', 'yearly', 'lifetime', 'none'],
+    default: 'none'
+  },
+  subscriptionStart: {
+    type: Date,
+    default: null
+  },
+  subscriptionEnd: {
+    type: Date,
+    default: null
+  },
+  paymentHistory: [{
+    amount: Number,
+    currency: String,
+    method: String,
+    transactionId: String,
+    status: { type: String, enum: ['pending', 'completed', 'failed'], default: 'pending' },
+    date: { type: Date, default: Date.now }
+  }],
   isVerified: {
     type: Boolean,
     default: true
