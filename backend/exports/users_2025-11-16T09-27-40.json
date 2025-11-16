@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "69074fc4a64eb29e37b2f839",
+    "name": "Zahid",
+    "email": "bmzahidulislam@outlook.com",
+    "createdAt": "2025-11-02T12:34:12.348Z",
+    "mobile": ""
+  },
+  {
+    "_id": "6907ac71349d189f7a76841a",
+    "name": "Test User",
+    "email": "conatctbmz@gmail.com",
+    "createdAt": "2025-11-02T19:09:37.802Z",
+    "mobile": ""
+  },
+  {
+    "_id": "69094421b02a89b745895ac9",
+    "name": "BM. Zahidul Islam",
+    "email": "manjazahid.w25@gmail.com",
+    "createdAt": "2025-11-04T00:09:05.387Z",
+    "mobile": ""
+  },
+  {
+    "_id": "69094454b02a89b745895aeb",
+    "name": "BMZ Cafe & Restaurent",
+    "email": "bmzcaferestaurent@gmail.com",
+    "createdAt": "2025-11-04T00:09:56.099Z",
+    "mobile": "+8801675633294",
+    "subscriptionTier": "free",
+    "isPhoneVerified": false
+  }
+]

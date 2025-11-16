@@ -238,7 +238,97 @@ src/pages/donate/Success.jsx
 
 ---
 
-### Step 43: Fitrah Calculator 🌙
+#
+
+### Step 42.5: Mobile Collection & SMS OTP Roadmap ✅ (COMPLETED - Option A)
+
+**Status:** ✅ COMPLETE (November 16, 2025)  
+**Strategy:** Option A - Hybrid Approach (FREE Launch, SMS Later)
+
+#### Implementation Summary:
+
+**Phase 1 (Current - FREE):**
+- ✅ Mobile number collection (mandatory field)
+- ✅ Country code selector (7 countries supported)
+- ✅ Save to database with `isPhoneVerified: false`
+- ✅ Email verification (Firebase FREE)
+- ✅ User data export script (`node export-users.js`)
+- ✅ Profile picture display on dashboard
+- ✅ No billing required - launch ready!
+
+**Phase 2 (Future - When ৳1,000+ invested):**
+- ⏳ SSL Wireless integration (Bangladesh SMS gateway)
+- ⏳ OTP verification via SMS
+- ⏳ Update `isPhoneVerified: true` after verification
+- ⏳ Premium features unlock for verified users
+
+#### Files Modified:
+1. `frontend/src/pages/auth/ProfileCompletion.jsx` - Simplified (no Firebase OTP)
+2. `frontend/src/pages/dashboard/Dashboard.jsx` - Added profile picture
+3. `backend/controllers/authController.js` - Handle `isPhoneVerified` field
+4. `backend/export-users.js` - NEW: Permanent data export script
+5. `README.md` - Added export command documentation
+
+#### SMS Gateway Research & Decision:
+
+**Options Evaluated:**
+1. **SSL Wireless** (Bangladesh) - ৳0.25/SMS, bKash payment ✅ **Selected for Phase 2**
+2. **MSG91** (International) - ৳0.40/SMS, 200+ countries support
+3. **Twilio** (Global) - ৳6-8/SMS, expensive but reliable
+4. **Firebase Phone Auth** - ❌ Requires Blaze Plan + Credit card, rejected
+
+**Why Option A (Hybrid Approach)?**
+- Zero upfront cost - launch immediately ✅
+- Mobile numbers collected for marketing ✅
+- Email verification provides basic security ✅
+- Gradual upgrade path when budget allows ✅
+- Trade-off: Some fake numbers possible (acceptable risk for MVP)
+
+#### User Flow:
+
+**New Users:**
+1. Google Sign-in → Profile completion page
+2. Select country (+880 Bangladesh default)
+3. Enter mobile number
+4. Click "সংরক্ষণ করুন" (no OTP sent)
+5. Saved with `isPhoneVerified: false`
+6. Redirect to dashboard
+
+**Marketing Data Format:**
+```javascript
+{
+  name: "BM. Zahidul Islam",
+  email: "user@gmail.com",
+  mobile: "+8801675633294",  // With country code
+  isPhoneVerified: false,     // Will be true after SMS OTP
+  subscriptionTier: "free"
+}
+```
+
+#### Future SMS Integration (Phase 2):
+
+**SSL Wireless Setup Steps:**
+1. Call: 09666-777-777
+2. Submit: Trade license + NID
+3. Recharge: ৳1,000 via bKash/Nagad
+4. Receive: API credentials (1-2 days)
+5. Deploy: Updated code with SMS OTP
+
+**Cost Projection:**
+- 100 users signup = ৳25
+- 1,000 users signup = ৳250
+- 10,000 users signup = ৳2,500
+
+#### Lessons Learned:
+
+1. **Firebase Phone Auth ≠ Free** - Requires billing even for test
+2. **Local SMS gateways better** - SSL Wireless accepts bKash
+3. **Pragmatic MVP approach** - Launch free, add verification later
+4. **User trust is gradual** - Email first, SMS when budget allows
+
+
+
+## Step 43: Fitrah Calculator 🌙
 
 **Masail Source:** Mufti Taqi Usmani
 ```javascript
@@ -561,7 +651,97 @@ src/locales/
 
 ---
 
-### Step 43: Premium Subscription System (HIGH PRIORITY) ⭐⭐⭐
+#
+
+### Step 42.5: Mobile Collection & SMS OTP Roadmap ✅ (COMPLETED - Option A)
+
+**Status:** ✅ COMPLETE (November 16, 2025)  
+**Strategy:** Option A - Hybrid Approach (FREE Launch, SMS Later)
+
+#### Implementation Summary:
+
+**Phase 1 (Current - FREE):**
+- ✅ Mobile number collection (mandatory field)
+- ✅ Country code selector (7 countries supported)
+- ✅ Save to database with `isPhoneVerified: false`
+- ✅ Email verification (Firebase FREE)
+- ✅ User data export script (`node export-users.js`)
+- ✅ Profile picture display on dashboard
+- ✅ No billing required - launch ready!
+
+**Phase 2 (Future - When ৳1,000+ invested):**
+- ⏳ SSL Wireless integration (Bangladesh SMS gateway)
+- ⏳ OTP verification via SMS
+- ⏳ Update `isPhoneVerified: true` after verification
+- ⏳ Premium features unlock for verified users
+
+#### Files Modified:
+1. `frontend/src/pages/auth/ProfileCompletion.jsx` - Simplified (no Firebase OTP)
+2. `frontend/src/pages/dashboard/Dashboard.jsx` - Added profile picture
+3. `backend/controllers/authController.js` - Handle `isPhoneVerified` field
+4. `backend/export-users.js` - NEW: Permanent data export script
+5. `README.md` - Added export command documentation
+
+#### SMS Gateway Research & Decision:
+
+**Options Evaluated:**
+1. **SSL Wireless** (Bangladesh) - ৳0.25/SMS, bKash payment ✅ **Selected for Phase 2**
+2. **MSG91** (International) - ৳0.40/SMS, 200+ countries support
+3. **Twilio** (Global) - ৳6-8/SMS, expensive but reliable
+4. **Firebase Phone Auth** - ❌ Requires Blaze Plan + Credit card, rejected
+
+**Why Option A (Hybrid Approach)?**
+- Zero upfront cost - launch immediately ✅
+- Mobile numbers collected for marketing ✅
+- Email verification provides basic security ✅
+- Gradual upgrade path when budget allows ✅
+- Trade-off: Some fake numbers possible (acceptable risk for MVP)
+
+#### User Flow:
+
+**New Users:**
+1. Google Sign-in → Profile completion page
+2. Select country (+880 Bangladesh default)
+3. Enter mobile number
+4. Click "সংরক্ষণ করুন" (no OTP sent)
+5. Saved with `isPhoneVerified: false`
+6. Redirect to dashboard
+
+**Marketing Data Format:**
+```javascript
+{
+  name: "BM. Zahidul Islam",
+  email: "user@gmail.com",
+  mobile: "+8801675633294",  // With country code
+  isPhoneVerified: false,     // Will be true after SMS OTP
+  subscriptionTier: "free"
+}
+```
+
+#### Future SMS Integration (Phase 2):
+
+**SSL Wireless Setup Steps:**
+1. Call: 09666-777-777
+2. Submit: Trade license + NID
+3. Recharge: ৳1,000 via bKash/Nagad
+4. Receive: API credentials (1-2 days)
+5. Deploy: Updated code with SMS OTP
+
+**Cost Projection:**
+- 100 users signup = ৳25
+- 1,000 users signup = ৳250
+- 10,000 users signup = ৳2,500
+
+#### Lessons Learned:
+
+1. **Firebase Phone Auth ≠ Free** - Requires billing even for test
+2. **Local SMS gateways better** - SSL Wireless accepts bKash
+3. **Pragmatic MVP approach** - Launch free, add verification later
+4. **User trust is gradual** - Email first, SMS when budget allows
+
+
+
+## Step 43: Premium Subscription System (HIGH PRIORITY) ⭐⭐⭐
 **Duration:** 6-8 hours
 **Target Date:** November 18-20, 2025
 

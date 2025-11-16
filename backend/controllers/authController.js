@@ -166,7 +166,7 @@ exports.getProfile = async (req, res) => {
 // Update User Profile (Mobile Number)
 exports.updateProfile = async (req, res) => {
   try {
-    const { firebaseUid, mobile, name } = req.body;
+    const { firebaseUid, mobile, name, isPhoneVerified } = req.body;
 
     if (!firebaseUid) {
       return res.status(400).json({
@@ -188,6 +188,7 @@ exports.updateProfile = async (req, res) => {
     // Update fields
     if (mobile) user.mobile = mobile;
     if (name) user.name = name;
+    if (typeof isPhoneVerified !== 'undefined') user.isPhoneVerified = isPhoneVerified;
 
     await user.save();
 

@@ -196,10 +196,23 @@ const Dashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            স্বাগতম, {currentUser?.displayName || 'ভাই'}! 🎉
+          <div className="flex items-center gap-4 mb-4">
+            {/* Profile Picture */}
+            {currentUser?.photoURL && (
+              <img 
+                src={currentUser.photoURL} 
+                alt={currentUser.displayName || 'User'}
+                className="w-16 h-16 rounded-full border-2 border-green-500 object-cover"
+                referrerPolicy="no-referrer"
+              />
+            )}
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                স্বাগতম, {currentUser?.displayName || 'ভাই'}! 🎉
           </h1>
           <p className="text-gray-600 bangla">আপনার আর্থিক ব্যবস্থাপনা শুরু করুন</p>
+            </div>
+          </div>
         </div>
 
         {/* 6 Cards */}

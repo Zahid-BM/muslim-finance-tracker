@@ -383,3 +383,20 @@ MIT License - See LICENSE file
 *O our Lord, accept [this] from us. Indeed, You are the Hearing, the Knowing.*
 
 **Allahumma barik!**
+
+
+## 📊 User Data Export
+
+Export all user data to CSV/JSON format:
+
+\`\`\`bash
+cd backend && node export-users.js
+\`\`\`
+
+**Output:**
+- CSV file: `backend/exports/users_TIMESTAMP.csv`
+- JSON file: `backend/exports/users_TIMESTAMP.json`
+- Console statistics with country breakdown
+
+**Note:** This is a temporary solution until Admin Dashboard is implemented in Step 45+.
+
