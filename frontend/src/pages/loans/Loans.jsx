@@ -21,7 +21,7 @@ const Loans = () => {
   const fetchStats = async () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL;
-      const response = await axios.get(`${API_URL}/loans/stats/${currentUser.uid}`);
+      const response = await axios.get(`${API_URL}/api/loans/stats/${currentUser.uid}`);
       
       if (response.data.success) {
         setStats(response.data.stats);

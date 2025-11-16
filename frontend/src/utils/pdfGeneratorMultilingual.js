@@ -90,6 +90,15 @@ const categoryTranslations = {
 };
 
 export const generateFinancialReport = async (userData, transactions, loans, stats, language = 'en') => {
+  // Check if there's any data to generate report
+  const hasTransactions = transactions && transactions.length > 0;
+  const hasLoans = loans && loans.length > 0;
+  const hasStats = stats && (stats.totalIncome > 0 || stats.totalExpense > 0);
+  
+  if (!hasTransactions && !hasLoans && !hasStats) {
+    throw new Error('No data available for report generation');
+  }
+  
   const t = translations[language] || translations.en;
   const categoryMap = categoryTranslations[language] || categoryTranslations.en;
 
@@ -206,7 +215,7 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
         </thead>
         <tbody>`;
 
-    loans.slice(0, 5).forEach(ln => {
+    loans.forEach(ln => {
       const lnAmount = currencySymbol + ' ' + Number(ln.amount).toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US');
       const lnRemaining = currencySymbol + ' ' + Number(ln.remainingAmount || 0).toLocaleString(language === 'bn' ? 'bn-BD' : language === 'ar' ? 'ar-SA' : language === 'hi' ? 'hi-IN' : language === 'ur' ? 'ur-PK' : 'en-US');
       const typeColor = ln.type === 'given' ? '#22c55e' : '#ef4444';
@@ -234,7 +243,7 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
     await new Promise(r => setTimeout(r, 1000));
 
     const canvas = await html2canvas(contentElement, {
-      scale: 2.5,
+      scale: 1.8,
       useCORS: true,
       backgroundColor: '#ffffff',
       windowWidth: 750
@@ -283,7 +292,7 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
       await new Promise(r => setTimeout(r, 100));
       
       const headerCanvas = await html2canvas(headerEl, { 
-        scale: 2.5, 
+        scale: 1.8, 
         backgroundColor: '#ffffff', 
         width: 794,
         windowWidth: 794
@@ -294,7 +303,7 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
       pdf.addImage(headerImgData, 'PNG', 0, 0, pdfW, headerH);
     };
 
-    const addFooter = async (pageNum) => {
+    const addFooter = async (pageNum, total) => {
       const footerY = pdfH - footerH;
       
       const footerEl = document.createElement('div');
@@ -316,7 +325,7 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
             </tr>
           </table>
           <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;">
-            <div style="font-size:10px;color:#6b7280;font-weight:600;">${t.pageOf} ${pageNum} ${t.of} ${totalPages}</div>
+            <div style="font-size:10px;color:#6b7280;font-weight:600;">${t.pageOf} ${pageNum} ${t.of} ${total || totalPages}</div>
           </div>
         </div>
       `;
@@ -325,7 +334,7 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
       await new Promise(r => setTimeout(r, 100));
       
       const footerCanvas = await html2canvas(footerEl, { 
-        scale: 2.5, 
+        scale: 1.8, 
         backgroundColor: '#ffffff', 
         width: 794,
         windowWidth: 794
@@ -336,6 +345,15 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
       pdf.addImage(footerImgData, 'PNG', 0, footerY, pdfW, footerH);
     };
 
+    let actualPageCount = 0;
+    
+    // First pass: count actual pages (skip empty ones)
+    for (let page = 1; page <= totalPages; page++) {
+      const srcY = (page - 1) * contentH * (canvas.width / pdfW);
+      const srcH = Math.min(contentH * (canvas.width / pdfW), canvas.height - srcY);
+      if (srcH > 50) actualPageCount++;
+    }
+    
     for (let page = 1; page <= totalPages; page++) {
       if (page > 1) pdf.addPage();
       
@@ -343,6 +361,12 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
       
       const srcY = (page - 1) * contentH * (canvas.width / pdfW);
       const srcH = Math.min(contentH * (canvas.width / pdfW), canvas.height - srcY);
+      
+      // Skip if this would create an empty page (less than 50 pixels of content)
+      if (srcH <= 50) {
+        pdf.deletePage(pdf.internal.getNumberOfPages());
+        break;
+      }
       
       const tmpCanvas = document.createElement('canvas');
       tmpCanvas.width = canvas.width;
@@ -352,12 +376,12 @@ export const generateFinancialReport = async (userData, transactions, loans, sta
       ctx.fillRect(0, 0, tmpCanvas.width, tmpCanvas.height);
       ctx.drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, canvas.width, srcH);
       
-      const pageImgData = tmpCanvas.toDataURL('image/png');
+      const pageImgData = tmpCanvas.toDataURL('image/jpeg', 0.75);
       const imgH = (srcH * pdfW) / canvas.width;
       
-      pdf.addImage(pageImgData, 'PNG', 0, headerH, pdfW, imgH);
+      pdf.addImage(pageImgData, 'JPEG', 0, headerH, pdfW, imgH, undefined, 'FAST');
       
-      await addFooter(page);
+      await addFooter(page, actualPageCount);
     }
 
     return pdf;

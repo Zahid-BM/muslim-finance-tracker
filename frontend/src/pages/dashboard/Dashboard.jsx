@@ -45,7 +45,7 @@ const Dashboard = () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL;
       
-      const transRes = await axios.get(`${API_URL}/transactions/stats/${currentUser.uid}`);
+      const transRes = await axios.get(`${API_URL}/api/transactions/stats/${currentUser.uid}`);
       if (transRes.data.success) {
         setStats(transRes.data.stats);
       }
@@ -59,7 +59,7 @@ const Dashboard = () => {
   const fetchLoanStats = async () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL;
-      const response = await axios.get(`${API_URL}/loans/stats/${currentUser.uid}`);
+      const response = await axios.get(`${API_URL}/api/loans/stats/${currentUser.uid}`);
       
       if (response.data.success) {
         setLoanStats(response.data.stats);

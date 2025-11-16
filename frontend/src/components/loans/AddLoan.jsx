@@ -35,7 +35,7 @@ const AddLoan = ({ onClose, onSuccess, loanType }) => {
     setLoading(true);
     try {
       const API_URL = import.meta.env.VITE_API_URL;
-      await axios.post(`${API_URL}/loans`, {
+      await axios.post(`${API_URL}/api/loans`, {
         type: loanType,
         personName: formData.personName,
         amount: parseFloat(formData.amount),

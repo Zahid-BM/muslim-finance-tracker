@@ -47,7 +47,7 @@ const AddIncome = ({ onClose, onSuccess }) => {
     try {
       const API_URL = import.meta.env.VITE_API_URL;
 
-      await axios.post(`${API_URL}/transactions`, {
+      await axios.post(`${API_URL}/api/transactions`, {
         type: 'income',
         category: formData.category,
         amount: parseFloat(formData.amount),

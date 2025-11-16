@@ -13,7 +13,7 @@ const TransactionList = () => {
   const fetchTransactions = async () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL;
-      const response = await axios.get(`${API_URL}/transactions/${currentUser.uid}`);
+      const response = await axios.get(`${API_URL}/api/transactions/${currentUser.uid}`);
       
       if (response.data.success) {
         setTransactions(response.data.transactions);
@@ -39,7 +39,7 @@ const TransactionList = () => {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL;
-      await axios.delete(`${API_URL}/transactions/${id}`, {
+      await axios.delete(`${API_URL}/api/transactions/${id}`, {
         data: { firebaseUid: currentUser.uid }
       });
 

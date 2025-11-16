@@ -24,15 +24,15 @@ const Reports = () => {
       const API_URL = import.meta.env.VITE_API_URL;
       
       // Fetch Transaction Stats
-      const statsRes = await axios.get(`${API_URL}/transactions/stats/${currentUser.uid}`);
+      const statsRes = await axios.get(`${API_URL}/api/transactions/stats/${currentUser.uid}`);
       setStats(statsRes.data.stats);
       
       // Fetch Transactions
-      const transRes = await axios.get(`${API_URL}/transactions/${currentUser.uid}`);
+      const transRes = await axios.get(`${API_URL}/api/transactions/${currentUser.uid}`);
       setTransactions(transRes.data.transactions);
       
       // Fetch Loans
-      const loansRes = await axios.get(`${API_URL}/loans/${currentUser.uid}`);
+      const loansRes = await axios.get(`${API_URL}/api/loans/${currentUser.uid}`);
       setLoans(loansRes.data.loans);
     } catch (error) {
       console.error('Fetch data error:', error);

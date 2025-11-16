@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }) => {
       const result = await signInWithPopup(auth, googleProvider);
       
       try {
-        await axios.post(`${API_URL}/auth/social-login`, {
+        await axios.post(`${API_URL}/api/auth/social-login`, {
           name: result.user.displayName,
           email: result.user.email,
           profilePicture: result.user.photoURL,
@@ -168,7 +168,7 @@ export const AuthProvider = ({ children }) => {
             authProvider = 'firebase-github';
           }
           
-          await axios.post(`${API_URL}/auth/register`, {
+          await axios.post(`${API_URL}/api/auth/register`, {
             name: user.displayName || user.email.split('@')[0],
             email: user.email,
             authProvider: authProvider,

@@ -13,7 +13,7 @@ const LoanList = () => {
   const fetchLoans = async () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL;
-      const response = await axios.get(`${API_URL}/loans/${currentUser.uid}`);
+      const response = await axios.get(`${API_URL}/api/loans/${currentUser.uid}`);
       
       if (response.data.success) {
         setLoans(response.data.loans);
@@ -39,7 +39,7 @@ const LoanList = () => {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL;
-      await axios.delete(`${API_URL}/loans/${id}`, {
+      await axios.delete(`${API_URL}/api/loans/${id}`, {
         data: { firebaseUid: currentUser.uid }
       });
       
